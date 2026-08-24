@@ -459,6 +459,35 @@ function initData() {
     '张书耀',
   ];
 
+  // Register users to database 
+  document.getElementById('reg-form').addEventListener('submit', async (event) => {
+  event.preventDefault();
+
+    const form = document.getElementById('reg-form');
+    const formData = new FormData(form);
+
+    try {
+        const response = await fetch('/api/register', {
+    method: 'POST',
+    body: formData
+});
+
+    const data = await response.json();
+
+    if(response.ok) {
+        alert('Registration complete!');
+        document.getElementById('reg-form').reset();
+    } else {
+        alert(`Error: ${data.error}`);
+      messageElement.style.color = 'red';
+    }
+    } catch (error) {
+        console.error('Network Error: ', error);
+        alert('Unable to reach Database!');
+    }
+});
+
+
   // Filter management names completely out of community lists
   const v1Streamers = rawV1Streamers.filter(
     (name) => !adminNames.includes(name.toLowerCase()),
@@ -564,29 +593,6 @@ function initData() {
   renderRoster();
   renderStreamers();
 }
-
-window.addEventListener('storage', (event) => {
-  if (event.key === 'tk_roster') {
-    try {
-      const adminNames = managementList.map((m) => m.ign.toLowerCase());
-      const parsed = JSON.parse(event.newValue || '[]');
-      rosterMembers = parsed.filter(
-        (m) => !adminNames.includes((m.ign || '').toLowerCase()),
-      );
-    } catch (e) {
-      rosterMembers = [];
-    }
-    renderRoster();
-  }
-  if (event.key === 'tk_streamers') {
-    try {
-      streamerMembers = JSON.parse(event.newValue || '[]');
-    } catch (e) {
-      streamerMembers = [];
-    }
-    renderStreamers();
-  }
-});
 
 /* ==========================================================================
    2. Leadership Carousel Controller
