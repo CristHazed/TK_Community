@@ -890,48 +890,6 @@ function readFileAsDataURL(file) {
   });
 }
 
-async function submitForm(e) {
-  e.preventDefault();
-
-  const gameImgFile = document.getElementById('gameProfileImg').files[0];
-  const fbImgFile = document.getElementById('fbProfileImg').files[0];
-
-  try {
-    const gameProfileImg = gameImgFile
-      ? await readFileAsDataURL(gameImgFile)
-      : '';
-    const fbProfileImg = fbImgFile ? await readFileAsDataURL(fbImgFile) : '';
-
-    const newReq = {
-      id: Date.now(),
-      name: document.getElementById('name').value,
-      ign: document.getElementById('ign').value,
-      uid: document.getElementById('uid').value,
-      streamerId: document.getElementById('streamerId').value,
-      fbLink: document.getElementById('fbLink').value,
-      role: document.getElementById('role').value,
-      gameProfileImg: gameProfileImg,
-      fbProfileImg: fbProfileImg,
-      submittedAt: Date.now(),
-    };
-
-    const existingRequests = JSON.parse(
-      localStorage.getItem('tk_requests') || '[]',
-    );
-    existingRequests.push(newReq);
-    localStorage.setItem('tk_requests', JSON.stringify(existingRequests));
-
-    alert(
-      `Application for ${newReq.ign} submitted successfully! Top Kings admins will review your application.`,
-    );
-    e.target.reset();
-  } catch (err) {
-    alert(
-      'Image file size is too large for LocalStorage. Please upload smaller images.',
-    );
-  }
-}
-
 function openModal() {
   const modal = document.getElementById('rulesModal');
   if (modal) {

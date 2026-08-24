@@ -7,7 +7,7 @@ document.getElementById('reg-form').addEventListener('submit', async (event) => 
     const formData = new FormData(form);
 
     try {
-        const response = await fetch('http://localhost:5001/api/register', {
+        const response = await fetch('/api/register', {
     method: 'POST',
     body: formData
 });
