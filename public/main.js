@@ -467,7 +467,7 @@ function initData() {
     const formData = new FormData(form);
 
     try {
-        const response = await fetch('/api/register', {
+        const response = await fetch('/api/routes/auth', {
     method: 'POST',
     body: formData
 });
