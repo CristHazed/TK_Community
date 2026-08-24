@@ -324,55 +324,45 @@
     <section id="join">
       <h2 class="section-title" data-label="ENTER THE RANKS">Join TK</h2>
 
-      <form class="reg-form" onsubmit="submitForm(event)">
+      <form id="reg-form" class="reg-form">
         <div class="form-group">
           <label for="name">Real Name *</label>
-          <input type="text" id="name" required placeholder="Juan Dela Cruz" />
+          <input type="text" id="name" name="name" required placeholder="John Doe" />
         </div>
 
         <div class="form-group">
           <label for="ign">In-Game Name (IGN) *</label>
-          <input type="text" id="ign" required placeholder="e.g. TK_Slayer" />
+          <input type="text" id="ign" name="IGN" required placeholder="e.g. TK_Slayer" />
         </div>
 
         <div class="form-group">
           <label for="uid">UID *</label>
-          <input
-            type="text"
-            id="uid"
-            required
-            placeholder="e.g. 6712345678901234"
-          />
+          <input type="text" id="uid" name="UID" required placeholder="e.g. 6712345678901234"/>
         </div>
 
         <div class="form-group">
           <label for="streamerId">Streamer Mode ID *</label>
           <input
-            type="text"
-            id="streamerId"
-            required
-            placeholder="e.g. a8f921d0"
-          />
+    type="text" id="streamerId" name="streamerId" required placeholder="e.g. a8f921d0"/>
         </div>
 
         <div class="form-group">
           <label for="gameProfileImg"> Screenshot of In-Game Profile * </label>
 
-          <input type="file" id="gameProfileImg" accept="image/*" required />
+          <input type="file" name="inGProfile" id="inGProfile" accept="image/*" />
         </div>
 
         <div class="form-group">
           <label for="fbProfileImg"> Screenshot of FB Profile * </label>
 
-          <input type="file" id="fbProfileImg" accept="image/*" required />
+          <input type="file" name="fbProfile" id="fbProfile" accept="image/*"/>
         </div>
 
         <div class="form-group">
           <label for="fbLink">FB Link *</label>
 
-          <input
+          <input name="FB" id="FB"
             type="url"
-            id="fbLink"
             required
             placeholder="https://facebook.com/yourprofile"
           />
@@ -381,7 +371,7 @@
         <div class="form-group">
           <label for="role">Preferred Role</label>
 
-          <select id="role">
+          <select id="role" name="role">
             <option value="Streamer">Streamer</option>
             <option value="Casual">Casual</option>
             <option value="Competitive">Competitive</option>
