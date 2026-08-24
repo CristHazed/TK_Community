@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Top Kings | News</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="main.css" />
+    <link rel="stylesheet" href="news.css" />
+  </head>
+  <body>
+    <header>
+      <div class="logo-container">
+        <img src="/images/logo.png" alt="Top Kings Logo" class="site-logo" />
+        <span class="logo-text">Top Kings</span>
+      </div>
+
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="index.html#about">About</a>
+        <a href="index.html#community">Community</a>
+        <a href="index.html#events">Events</a>
+        <a href="index.html#partners">Partners</a>
+        <a href="index.html#creators">Creators</a>
+        <a href="achievements.html">Achievements</a>
+        <a href="news.html">News</a>
+        <a href="index.html#join">Join TK</a>
+      </nav>
+    </header>
+
+    <main class="page-shell">
+      <section class="page-hero">
+        <p class="eyebrow">Top Kings</p>
+        <h1>News</h1>
+        <p>Latest updates, community moments, and official announcements.</p>
+      </section>
+
+      <section class="filter-bar">
+        <button class="news-filter active" data-filter="all">All</button>
+        <button class="news-filter" data-filter="community">Community</button>
+        <button class="news-filter" data-filter="events">Events</button>
+        <button class="news-filter" data-filter="updates">Updates</button>
+      </section>
+
+      <section class="news-grid">
+        <article class="news-card" data-category="community">
+          <span class="tag">Community</span>
+          <h3>TK Member Spotlight</h3>
+          <p>
+            The community continues to grow with new players, creators, and
+            loyal members who keep the energy high.
+          </p>
+          <a href="index.html#community">View Community</a>
+        </article>
+
+        <article class="news-card" data-category="events">
+          <span class="tag">Events</span>
+          <h3>Summer Community Matchups</h3>
+          <p>
+            Top Kings is preparing for the next wave of events, tournaments, and
+            friendly competition across the roster.
+          </p>
+          <a href="index.html#events">See Events</a>
+        </article>
+
+        <article class="news-card" data-category="updates">
+          <span class="tag">Updates</span>
+          <h3>Recruitment Open</h3>
+          <p>
+            New members can now apply and join the community with the latest
+            requirements and onboarding guidance.
+          </p>
+          <a href="index.html#join">Join TK</a>
+        </article>
+
+        <article class="news-card" data-category="community">
+          <span class="tag">Community</span>
+          <h3>Healthy Gameplay Culture</h3>
+          <p>
+            The focus remains on positive teamwork, skill-building, and a
+            supportive space for every player.
+          </p>
+          <a href="index.html#about">About TK</a>
+        </article>
+
+        <article class="news-card" data-category="events">
+          <span class="tag">Events</span>
+          <h3>Creator and Streamer Features</h3>
+          <p>
+            More creators and streamers are joining the platform, helping push
+            the TK identity further online.
+          </p>
+          <a href="index.html#creators">Creators</a>
+        </article>
+
+        <article class="news-card" data-category="updates">
+          <span class="tag">Updates</span>
+          <h3>Official Socials Update</h3>
+          <p>
+            Follow the latest announcements and community posts through our
+            official Facebook and TikTok pages.
+          </p>
+          <a href="index.html#events">Socials</a>
+        </article>
+      </section>
+    </main>
+
+    <footer>
+      <p>
+        &copy; <span id="currentYear"></span> Top Kings Esports. All Rights
+        Reserved.
+      </p>
+    </footer>
+
+    <script src="news.js"></script>
+  </body>
+</html>

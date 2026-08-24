@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Top Kings Community | Esports</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <link rel="stylesheet" href="main.css" />
+    <link rel="stylesheet" href="streamer.css" />
+  </head>
+
+  <body>
+    <header>
+      <div class="logo-container">
+        <button class="logo-button" type="button" aria-label="Top Kings logo">
+          <img src="/images/logo.png" alt="Top Kings Logo" class="site-logo" />
+        </button>
+      </div>
+
+      <nav>
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#partners">Partners</a>
+        <a href="#creators">Creators</a>
+        <a href="achievements.html">Achievements</a>
+        <a href="news.html">News</a>
+        <a href="#join">Join TK</a>
+        <a href="#events">Events</a>
+        <a href="#community">Community</a>
+      </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+      <h1>TOP KINGS COMMUNITY</h1>
+      <p>Made to Ascend</p>
+      <p>Take the crown, claim your throne.</p>
+
+      <button class="btn" onclick="openModal()">Rules & Regulations</button>
+    </section>
+
+    <!-- Rules Modal -->
+    <div id="rulesModal" class="modal-overlay">
+      <div class="modal-content">
+        <button
+          class="close-btn"
+          type="button"
+          aria-label="Close modal"
+          onclick="closeModal()"
+        >
+          &times;
+        </button>
+
+        <h2 class="modal-title">Rules & Regulations</h2>
+
+        <div class="rules-img-container">
+          <img
+            src="/images/rules-image.png"
+            alt="Top Kings Rules and Regulations"
+            class="rules-img"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Third Month Anniversary Modal -->
+    <div id="thirdMonthModal" class="modal-overlay third-month-overlay">
+      <div class="modal-content third-month-content">
+        <button
+          class="close-btn"
+          type="button"
+          aria-label="Close anniversary popup"
+          onclick="closeThirdMonthModal()"
+        >
+          &times;
+        </button>
+
+        <div class="third-month-container">
+          <img
+            src="/images/thirdMonth.png"
+            alt="Top Kings Third Monthsary"
+            class="third-month-image"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Management Section -->
+    <section class="about-section" id="about">
+      <h2 class="section-title" data-label="THE FOUNDATION">About TK</h2>
+
+      <p class="about-description">
+        Established: May 20, 2026<br />
+        Founded by Raya<br />
+        CODM-focused gaming community<br />
+        Mission: build a friendly, healthy, and supportive community for gamers.
+      </p>
+
+      <div class="content-grid">
+        <div class="feed-box">
+          <h3 class="card-title">Recruitment / Joining</h3>
+          <p>Why Join TK?</p>
+          <ul>
+            <li>17+ age requirement</li>
+            <li>Maximum of 2 communities, including TK</li>
+            <li>TK tag must be at the end of the IGN</li>
+            <li>Active participation in community events</li>
+            <li>Good attitude and behavior</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 class="team-title" data-label="THE LEADERSHIP UNIT">
+        ADMINISTRATION
+      </h3>
+
+      <div class="carousel-container">
+        <button
+          class="carousel-btn prev-btn"
+          id="carouselPrev"
+          aria-label="Previous Slide"
+        >
+          &lsaquo;
+        </button>
+
+        <div class="carousel-track-wrapper">
+          <div class="carousel-track" id="carouselTrack">
+            <!-- RAYA -->
+            <div class="carousel-slide active">
+              <div class="leader-card">
+                <div class="leader-avatar-wrapper">
+                  <img
+                    src="./Admin Pictures/raya.jpg"
+                    alt="RAYA"
+                    class="leader-avatar-img"
+                  />
+                </div>
+
+                <span class="member-badge">Founder</span>
+                <h2>RAYA</h2>
+                <span class="version-tag"> MANAGEMENT • V1 </span>
+              </div>
+            </div>
+
+            <!-- AVA -->
+            <div class="carousel-slide">
+              <div class="leader-card">
+                <div class="leader-avatar-wrapper">
+                  <img
+                    src="./Admin Pictures/ava.png"
+                    alt="AVA"
+                    class="leader-avatar-img"
+                  />
+                </div>
+
+                <span class="member-badge">Co-Founder</span>
+                <h2>AVA</h2>
+                <span class="version-tag"> MANAGEMENT • V1 </span>
+              </div>
+            </div>
+
+            <!-- NALA -->
+            <div class="carousel-slide">
+              <div class="leader-card">
+                <div class="leader-avatar-wrapper">
+                  <img
+                    src="./Admin Pictures/nala.png"
+                    alt="NALA"
+                    class="leader-avatar-img"
+                  />
+                </div>
+
+                <span class="member-badge">Co-Founder</span>
+                <h2>NALA</h2>
+                <span class="version-tag"> MANAGEMENT • V1 </span>
+              </div>
+            </div>
+
+            <!-- YAJ -->
+            <div class="carousel-slide">
+              <div class="leader-card">
+                <div class="leader-avatar-wrapper">
+                  <img
+                    src="./Admin Pictures/yaj.png"
+                    alt="YAJ"
+                    class="leader-avatar-img"
+                  />
+                </div>
+
+                <span class="member-badge">Head Disciplinary</span>
+                <h2>YAJ</h2>
+                <span class="version-tag"> MANAGEMENT • V1 </span>
+              </div>
+            </div>
+
+            <!-- KIRAA -->
+            <div class="carousel-slide">
+              <div class="leader-card">
+                <div class="leader-avatar-wrapper">
+                  <img
+                    src="images/kiraa.jpg"
+                    alt="KIRAA"
+                    class="leader-avatar-img"
+                  />
+                </div>
+
+                <span class="member-badge">Disciplinary</span>
+                <h2>KIRAA</h2>
+                <span class="version-tag"> MANAGEMENT • V2 </span>
+              </div>
+            </div>
+
+            <!-- LUWI -->
+            <div class="carousel-slide">
+              <div class="leader-card">
+                <div class="leader-avatar-wrapper">
+                  <img
+                    src="images/luwi.jpg"
+                    alt="LUWI"
+                    class="leader-avatar-img"
+                  />
+                </div>
+
+                <span class="member-badge">Head Admin</span>
+                <h2>LUWI</h2>
+                <span class="version-tag"> MANAGEMENT • V1 </span>
+              </div>
+            </div>
+
+            <!-- WUSHI -->
+            <div class="carousel-slide">
+              <div class="leader-card">
+                <div class="leader-avatar-wrapper">
+                  <img
+                    src="images/wushi.jpg"
+                    alt="WUSHI"
+                    class="leader-avatar-img"
+                  />
+                </div>
+
+                <span class="member-badge">Head Admin</span>
+                <h2>WUSHI</h2>
+                <span class="version-tag"> MANAGEMENT • V2 </span>
+              </div>
+            </div>
+
+            <!-- PIA -->
+            <div class="carousel-slide">
+              <div class="leader-card">
+                <div class="leader-avatar-wrapper">
+                  <img
+                    src="./Admin Pictures/piaV1.jpg"
+                    alt="PIA"
+                    class="leader-avatar-img"
+                  />
+                </div>
+
+                <span class="member-badge">Admin</span>
+                <h2>PIA</h2>
+                <span class="version-tag"> MANAGEMENT • V1 </span>
+              </div>
+            </div>
+
+            <!-- LY -->
+            <div class="carousel-slide">
+              <div class="leader-card">
+                <div class="leader-avatar-wrapper">
+                  <img
+                    src="./Admin Pictures/ly.jpg"
+                    alt="LY"
+                    class="leader-avatar-img"
+                  />
+                </div>
+
+                <span class="member-badge">Admin</span>
+                <h2>LY</h2>
+                <span class="version-tag"> MANAGEMENT • V1 </span>
+              </div>
+            </div>
+
+            <!-- KYOUKA -->
+            <div class="carousel-slide">
+              <div class="leader-card">
+                <div class="leader-avatar-wrapper">
+                  <img
+                    src="images/kyouka.jpg"
+                    alt="KYOUKA"
+                    class="leader-avatar-img"
+                  />
+                </div>
+
+                <span class="member-badge">Admin</span>
+                <h2>KYOUKA</h2>
+                <span class="version-tag"> MANAGEMENT • V1 </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button
+          class="carousel-btn next-btn"
+          id="carouselNext"
+          aria-label="Next Slide"
+        >
+          &rsaquo;
+        </button>
+
+        <div class="carousel-dots" id="carouselDots"></div>
+      </div>
+    </section>
+
+    <!-- Registration Section -->
+    <section id="join">
+      <h2 class="section-title" data-label="ENTER THE RANKS">Join TK</h2>
+
+      <form class="reg-form" onsubmit="submitForm(event)">
+        <div class="form-group">
+          <label for="name">Real Name *</label>
+          <input type="text" id="name" required placeholder="Juan Dela Cruz" />
+        </div>
+
+        <div class="form-group">
+          <label for="ign">In-Game Name (IGN) *</label>
+          <input type="text" id="ign" required placeholder="e.g. TK_Slayer" />
+        </div>
+
+        <div class="form-group">
+          <label for="uid">UID *</label>
+          <input
+            type="text"
+            id="uid"
+            required
+            placeholder="e.g. 6712345678901234"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="streamerId">Streamer Mode ID *</label>
+          <input
+            type="text"
+            id="streamerId"
+            required
+            placeholder="e.g. a8f921d0"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="gameProfileImg"> Screenshot of In-Game Profile * </label>
+
+          <input type="file" id="gameProfileImg" accept="image/*" required />
+        </div>
+
+        <div class="form-group">
+          <label for="fbProfileImg"> Screenshot of FB Profile * </label>
+
+          <input type="file" id="fbProfileImg" accept="image/*" required />
+        </div>
+
+        <div class="form-group">
+          <label for="fbLink">FB Link *</label>
+
+          <input
+            type="url"
+            id="fbLink"
+            required
+            placeholder="https://facebook.com/yourprofile"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="role">Preferred Role</label>
+
+          <select id="role">
+            <option value="Streamer">Streamer</option>
+            <option value="Casual">Casual</option>
+            <option value="Competitive">Competitive</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn submit-btn">Submit Application</button>
+      </form>
+    </section>
+
+    <!-- Events / News / Partners Section -->
+    <section id="events">
+      <h2 class="section-title" data-label="COMMUNITY INTEL">Events & News</h2>
+
+      <div class="content-grid">
+        <div class="feed-box">
+          <h3 class="card-title">Top Kings Events</h3>
+          <p>
+            Community gatherings, tournaments, updates, and special campaigns
+            for members to participate in and grow together.
+          </p>
+        </div>
+
+        <div class="feed-box" id="partners">
+          <h3 class="card-title">Partnerships</h3>
+          <ul>
+            <li>Infinity Esports</li>
+            <li>Fantasma Esports</li>
+          </ul>
+        </div>
+
+        <div class="feed-box" id="creators">
+          <h3 class="card-title">Creators & Streamers</h3>
+          <ul>
+            <li>Version 1</li>
+            <li>Version 2</li>
+          </ul>
+        </div>
+
+        <div class="feed-box" id="achievements">
+          <h3 class="card-title">Achievements</h3>
+          <p>
+            Community milestones, tournament moments, and the ongoing journey of
+            ascending together.
+          </p>
+        </div>
+
+        <div class="feed-box" id="news">
+          <h3 class="card-title">Latest News</h3>
+          <p>
+            Community updates, announcements, and important information for all
+            members.
+          </p>
+        </div>
+
+        <div class="feed-box social-box">
+          <h3 class="card-title">Socials</h3>
+          <div class="social-links">
+            <a
+              class="social-card facebook"
+              href="https://www.facebook.com/topkingsofficial"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Facebook"
+            >
+              <i class="fa-brands fa-facebook-f social-icon"></i>
+            </a>
+
+            <a
+              class="social-card tiktok"
+              href="https://www.tiktok.com/@topkingsofficial"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="TikTok"
+            >
+              <i class="fa-brands fa-tiktok social-icon"></i>
+            </a>
+
+            <a
+              class="social-card email"
+              href="mailto:topkingsdomain@gmail.com"
+              aria-label="Email"
+            >
+              <i class="fa-solid fa-envelope social-icon"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="feed-box">
+          <h3 class="card-title">Partnership Inquiries</h3>
+          <p>Email: topkingsdomain@gmail.com</p>
+        </div>
+
+        <div class="feed-box">
+          <h3 class="card-title">Privacy Policy</h3>
+          <p>To be updated.</p>
+        </div>
+
+        <div class="feed-box">
+          <h3 class="card-title">Terms & Guidelines</h3>
+          <p>To be updated.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Streamers Section -->
+    <section id="streamers" class="streamers-section">
+      <h2 class="section-title" data-label="THE BROADCAST CREW">Streamers</h2>
+      <div class="streamer-carousel" aria-label="Featured Top Kings streamers">
+        <button
+          class="streamer-carousel-btn"
+          id="streamer-prev"
+          type="button"
+          aria-label="Previous streamer"
+        >
+          &lsaquo;
+        </button>
+        <div class="streamer-carousel-window">
+          <div id="public-streamers-list" class="streamer-track"></div>
+        </div>
+        <button
+          class="streamer-carousel-btn"
+          id="streamer-next"
+          type="button"
+          aria-label="Next streamer"
+        >
+          &rsaquo;
+        </button>
+      </div>
+      <div
+        id="streamer-dots"
+        class="streamer-dots"
+        aria-label="Streamer carousel pages"
+      ></div>
+    </section>
+
+    <!-- Community Roster Section -->
+    <section id="community" class="roster-section">
+      <h2 class="section-title" data-label="THE ROSTER">Community Members</h2>
+
+      <!-- Version Toggle Tabs -->
+      <div class="version-tabs">
+        <button
+          class="v-tab-btn active"
+          onclick="switchRosterVersion('v1', this)"
+        >
+          Version 1
+        </button>
+
+        <button class="v-tab-btn" onclick="switchRosterVersion('v2', this)">
+          Version 2
+        </button>
+      </div>
+
+      <!-- Role Filter Buttons -->
+      <div class="role-filter-bar">
+        <button class="filter-btn active" data-role="ALL">All Roles</button>
+
+        <button class="filter-btn" data-role="Casual">Casual</button>
+
+        <button class="filter-btn" data-role="Streamer">Streamer</button>
+      </div>
+
+      <!-- Search Input -->
+      <div class="search-box">
+        <input
+          type="text"
+          id="public-roster-search"
+          placeholder="Search member by IGN..."
+        />
+      </div>
+
+      <!-- Member Grid -->
+      <div
+        id="roster-v1-container"
+        class="roster-grid version-container active"
+      ></div>
+
+      <div
+        id="roster-v2-container"
+        class="roster-grid version-container"
+        style="display: none"
+      ></div>
+    </section>
+
+    <footer>
+      <p>&copy; 2026 Top Kings Esports. All Rights Reserved.</p>
+    </footer>
+
+    <script src="main.js"></script>
+  </body>
+</html>
