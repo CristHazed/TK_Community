@@ -479,7 +479,6 @@ function initData() {
         document.getElementById('reg-form').reset();
     } else {
         alert(`Error: ${data.error}`);
-      messageElement.style.color = 'red';
     }
     } catch (error) {
         console.error('Network Error: ', error);
