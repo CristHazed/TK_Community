@@ -1,13 +1,13 @@
 {
   "version": 2,
-  "services": [
+  "builds": [
     {
-      "name": "frontend",
-      "src": "frontend"
+      "src": "backend/server.js",
+      "use": "@vercel/node"
     },
     {
-      "name": "backend",
-      "src": "backend"
+      "src": "public/**/*",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
@@ -16,8 +16,8 @@
       "dest": "backend/server.js"
     },
     {
-      "src": "/public/FinalFrontend/TK_Official/index.html",
-      "dest": "frontend/$1"
+      "src": "/(.*)",
+      "dest": "public/FinalFrontend/TK_Official/$1"
     }
   ]
 }
