@@ -13,10 +13,10 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "backend/index.js"
+      "dest": "backend/server.js"
     },
     {
-      "src": "/(.*)",
+      "src": "/public/FinalFrontend/TK_Official/index.html",
       "dest": "frontend/$1"
     }
   ]
