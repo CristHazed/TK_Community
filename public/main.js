@@ -534,24 +534,6 @@ function initData() {
     ...v2Members.map((ign) => ({ ign, role: 'Casual', version: 'v2' })),
   ];
 
-  const savedRoster = localStorage.getItem('tk_roster');
-  const savedStreamers = localStorage.getItem('tk_streamers');
-  if (!savedRoster) {
-    rosterMembers = defaultRoster;
-    localStorage.setItem('tk_roster', JSON.stringify(defaultRoster));
-  } else {
-    try {
-      const parsed = JSON.parse(savedRoster);
-      rosterMembers = parsed.filter(
-        (m) => !adminNames.includes((m.ign || '').toLowerCase()),
-      );
-      localStorage.setItem('tk_roster', JSON.stringify(rosterMembers));
-    } catch (e) {
-      rosterMembers = defaultRoster;
-      localStorage.setItem('tk_roster', JSON.stringify(defaultRoster));
-    }
-  }
-
   if (!savedStreamers) {
     const legacyStreamers = rosterMembers.filter(
       (member) => member.role === 'Streamer',
