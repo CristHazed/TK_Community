@@ -3,31 +3,27 @@ document.getElementById('adminregform').addEventListener('submit', async (event)
 
     const form = document.getElementById('adminregform');
     const formData = new FormData(form);
-    
-    // Convert form fields to an object
     const dataObject = Object.fromEntries(formData.entries());
 
     try {
-        const response = await fetch('/api/auth/addAdmin', {
+        const res = await fetch('/api/auth/addAdmin', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(dataObject)
         });
 
-        const response = await response.text();
+        const text = await res.text();
         let data;
-        
+
         try {
-            data = JSON.parse(response);
+            data = JSON.parse(text);
         } catch (e) {
-            console.error("Server did not return JSON. Raw response:", response);
+            console.error("Server did not return JSON. Raw response:", text);
             alert("Server Error: Received unexpected response from server.");
             return;
         }
 
-        if (response.ok) {
+        if (res.ok) {
             alert('Registration complete!');
             form.reset();
         } else {
