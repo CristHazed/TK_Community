@@ -21,7 +21,7 @@ if (logo) {
     }, 1200);
 
     if (tapCount === 5) {
-      window.location.href = 'Admin/admin.html';
+      window.location.href = '/Admin/login.html';
       tapCount = 0;
     }
   });

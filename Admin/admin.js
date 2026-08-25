@@ -40,6 +40,11 @@ function mapUserRecord(user) {
   };
 }
 
+const adminToken = localStorage.getItem('tk_admin_token');
+if (!adminToken) {
+  window.location.href = '/Admin/login.html';
+}
+
 async function apiRequest(url, options) {
   const res = await fetch(url, {
     headers: { 'Content-Type': 'application/json' },
