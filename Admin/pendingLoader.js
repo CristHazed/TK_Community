@@ -8,12 +8,13 @@ let activeTargetUserId = null;
 
 async function loadRegistrations() {
     try {
-        const token = localStorage.getItem('authToken');   
-        const response = await fetch('/api/admin/users', { 
+        const token = localStorage.getItem('tk_admin_token');
+
+        const response = await fetch('/api/admin/user-count', {
+            method: 'GET',
             headers: {
-        // Ensure you are passing the required credentials
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
             }
         });
         
@@ -177,7 +178,7 @@ async function handleAction(userId, actionType) {
 async function fetchUserCount() {
     try {
 
-        const token = localStorage.getItem('access_token', {
+        const token = localStorage.getItem('tk_admin_token', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`, // Verify this token is valid
