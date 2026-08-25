@@ -8,7 +8,14 @@ let activeTargetUserId = null;
 
 async function loadRegistrations() {
     try {
-        const response = await fetch('/api/admin/users');
+        const token = localStorage.getItem('authToken');   
+        const response = await fetch('/api/admin/users', { 
+            headers: {
+        // Ensure you are passing the required credentials
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+            }
+        });
         
         if (!response.ok) {
             throw new Error(`HTTP network error! Status: ${response.status}`);
@@ -169,7 +176,16 @@ async function handleAction(userId, actionType) {
 */
 async function fetchUserCount() {
     try {
-        const response = await fetch('/api/admin/user-count');
+
+        const token = localStorage.getItem('access_token', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`, // Verify this token is valid
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const response = await fetch('/api/admin/user-count', );
         const data = await response.json();
         document.getElementById('pending-count').innerText = data.count;
     } catch (error) {

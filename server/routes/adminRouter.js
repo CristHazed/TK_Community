@@ -5,6 +5,7 @@ const User = require('../models/Users');
 const upload = require('../middleware/upload');
 const cloudinary = require('../config/cloudinary');
 const verifyToken = require('../middleware/authMiddleware');
+const jwt = require('jsonwebtoken');
 
 // Every route below requires a valid Authorization: Bearer <token> header
 router.use(verifyToken);
