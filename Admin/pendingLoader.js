@@ -10,7 +10,7 @@ async function loadRegistrations() {
     try {
         const token = localStorage.getItem('tk_admin_token');
 
-        const response = await fetch('/api/admin/user-count', {
+        const response = await fetch('/api/admin/users', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
