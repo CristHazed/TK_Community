@@ -1,9 +1,7 @@
 require('dotenv').config();
 
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
-
 const connectDB = require('./server/config/db');
 
 const adminRouter = require('./server/routes/adminRouter');
@@ -11,11 +9,10 @@ const loginRouter = require('./server/routes/auth');
 
 const app = express();
 
-connectDB();
-
 app.use(cors());
 app.use(express.json());
 
+// Intercept routing flow to verify database link is active before parsing
 app.use(async (req, res, next) => {
   try {
     await connectDB();
