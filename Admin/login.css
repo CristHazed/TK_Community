@@ -1,0 +1,143 @@
+:root {
+  --tk-red-light: #ff5131;
+  --tk-red-primary: #d32f2f;
+  --tk-red-dark: #9a0007;
+  --tk-red-darker: #5f0000;
+  --tk-dark-bg: #141414;
+  --tk-panel: #1f1f1f;
+  --tk-border: rgba(255, 255, 255, 0.12);
+  --tk-text: #f5f5f5;
+  --tk-muted: #d0d0d0;
+  --tk-error: #ff8b8b;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Rajdhani', sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #1d1d1d 0%, #3a0f0f 100%);
+  color: var(--tk-text);
+}
+
+.login-shell {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+.login-card {
+  width: min(420px, 100%);
+  background: rgba(20, 20, 20, 0.96);
+  border: 1px solid var(--tk-border);
+  border-radius: 18px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+  padding: 2rem;
+}
+
+.brand-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.brand-logo {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+
+.brand-tag {
+  font-size: 0.85rem;
+  letter-spacing: 0.12rem;
+  text-transform: uppercase;
+  color: var(--tk-red-light);
+  font-weight: 700;
+}
+
+h1 {
+  font-size: 2rem;
+  line-height: 1.1;
+}
+
+#admin-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+label {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--tk-muted);
+}
+
+select,
+input {
+  width: 100%;
+  border: 1px solid #555;
+  background: #111;
+  color: var(--tk-text);
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  font-size: 1rem;
+}
+
+select:focus,
+input:focus {
+  outline: none;
+  border-color: var(--tk-red-light);
+  box-shadow: 0 0 0 2px rgba(255, 81, 49, 0.25);
+}
+
+.submit-btn,
+.secondary-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.submit-btn {
+  margin-top: 0.75rem;
+  background: linear-gradient(
+    135deg,
+    var(--tk-red-primary),
+    var(--tk-red-dark)
+  );
+  color: white;
+}
+
+.secondary-btn {
+  width: 100%;
+  margin-top: 1rem;
+  background: transparent;
+  color: var(--tk-text);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.submit-btn:hover,
+.secondary-btn:hover {
+  transform: translateY(-1px);
+  opacity: 0.96;
+}
+
+.error-message {
+  min-height: 1.5rem;
+  margin-top: 0.75rem;
+  color: var(--tk-error);
+  font-weight: 700;
+}

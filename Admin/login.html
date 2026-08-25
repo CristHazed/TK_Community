@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Top Kings | Admin Login</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="login.css" />
+  </head>
+  <body>
+    <div class="login-shell">
+      <div class="login-card">
+        <div class="brand-row">
+          <img src="/images/logo.png" alt="Top Kings Logo" class="brand-logo" />
+          <div>
+            <p class="brand-tag">Top Kings</p>
+            <h1>Admin Login</h1>
+          </div>
+        </div>
+
+        <form id="admin-login-form" novalidate>
+          <label for="admin-username">Username</label>
+          <input
+            id="admin-username"
+            type="text"
+            placeholder="Enter your username"
+            autocomplete="username"
+            required
+          />
+
+          <label for="admin-password">Password</label>
+          <input
+            id="admin-password"
+            type="password"
+            placeholder="Enter your password"
+            autocomplete="current-password"
+            required
+          />
+
+          <button type="submit" class="submit-btn">Login</button>
+        </form>
+
+        <p id="login-error" class="error-message" aria-live="polite"></p>
+
+        <button id="back-home" class="secondary-btn" type="button">
+          Back to Home
+        </button>
+      </div>
+    </div>
+
+    <script src="login.js"></script>
+  </body>
+</html>

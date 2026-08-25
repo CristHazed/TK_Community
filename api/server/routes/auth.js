@@ -42,7 +42,8 @@ router.post('/register', upload.fields([
                 UID,
                 streamerId,
                 FB,
-                role
+                role,
+                referral
             } = req.body;
             
             const targetUID = Number(UID);
@@ -97,6 +98,7 @@ router.post('/register', upload.fields([
                 streamerId: streamerId,
                 FB: FB,
                 role: role,
+                referral: referral,
 
                 inGProfile: {
                     url: gameProfileResult.secure_url,
@@ -140,6 +142,44 @@ router.post('/register', upload.fields([
 
     }
 );
+
+// Add admin credentials
+
+router.post('/addAdmin', async (req, res) => {
+    try {
+        const {
+            username,
+            password
+        } = req.body;
+
+        const adminUser = String(username);
+
+        const existAdmin = await Admin.exists({ username: adminUser});
+        if(existAdmin) {
+            return res.status(400).json({ error: 'This admin is already registered '});
+        }
+
+        const newAdmin = new Admin({
+            username: username,
+            password: password
+        });
+
+        await newAdmin.save();
+
+        return res.status(201).json({
+            message: 'Admin has been added successfully!',
+            admin: newAdmin
+        });
+    } catch (error){
+        console.error('Registration Error: ', error);
+
+        res.status(500).json({
+            error: 'Server Error',
+            message: error.message
+        });
+    }
+});
+
 
 // AUTHENTICATE LOGIN
 router.get('/login/:uid', async (req,res) => {

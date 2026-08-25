@@ -37,10 +37,9 @@ router.put('/users/:id/reject', async (req, res) => {
     }
 });
 
-// OPTIONAL: Update your GET /users route to ONLY load pending applications
+// Get pending applications
 router.get('/users', async (req, res) => {
     try {
-        // This ensures processed users disappear from the incoming dashboard list
         const users = await User.find({ status: 'pending' });
 
         res.status(200).json({
@@ -52,9 +51,9 @@ router.get('/users', async (req, res) => {
     }
 });
 
+// Get user counts with pending application
 router.get('/user-count', async (req, res) => {
   try {
-    // ONLY count records waiting for admin review
     const count = await User.countDocuments({ status: 'pending' });
     res.json({ count });
   } catch (err) {

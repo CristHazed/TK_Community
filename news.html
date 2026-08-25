@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Top Kings | News</title>
+    <link rel="icon" type="image/png" href="/images/logo.png" />
     <link
       href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap"
       rel="stylesheet"
@@ -18,16 +19,27 @@
         <span class="logo-text">Top Kings</span>
       </div>
 
-      <nav>
+      <button
+        class="menu-toggle"
+        type="button"
+        aria-label="Open navigation"
+        aria-expanded="false"
+        aria-controls="site-navigation"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav id="site-navigation">
         <a href="index.html">Home</a>
+        <a href="index.html#join">Join TK</a>
         <a href="index.html#about">About</a>
-        <a href="index.html#community">Community</a>
-        <a href="index.html#events">Events</a>
         <a href="index.html#partners">Partners</a>
-        <a href="index.html#creators">Creators</a>
         <a href="achievements.html">Achievements</a>
         <a href="news.html">News</a>
-        <a href="index.html#join">Join TK</a>
+        <a href="index.html#streamers">Streamers</a>
+        <a href="index.html#community">Community</a>
       </nav>
     </header>
 
@@ -63,7 +75,7 @@
             Top Kings is preparing for the next wave of events, tournaments, and
             friendly competition across the roster.
           </p>
-          <a href="index.html#events">See Events</a>
+          <a href="index.html#about">See About TK</a>
         </article>
 
         <article class="news-card" data-category="updates">
@@ -93,7 +105,7 @@
             More creators and streamers are joining the platform, helping push
             the TK identity further online.
           </p>
-          <a href="index.html#creators">Creators</a>
+          <a href="index.html#streamers">Streamers</a>
         </article>
 
         <article class="news-card" data-category="updates">
@@ -103,7 +115,7 @@
             Follow the latest announcements and community posts through our
             official Facebook and TikTok pages.
           </p>
-          <a href="index.html#events">Socials</a>
+          <a href="index.html#about">Socials</a>
         </article>
       </section>
     </main>
@@ -115,6 +127,7 @@
       </p>
     </footer>
 
+    <script src="nav.js"></script>
     <script src="news.js"></script>
   </body>
 </html>
