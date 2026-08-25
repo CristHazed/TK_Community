@@ -111,7 +111,7 @@ async function loadRegistrations() {
         requestsList.innerHTML = `<h1>Error Loading Data</h1>`;
     }
 }
-
+/*
 modalConfirmBtn.onclick = async () => {
     if (!activeTargetUserId) return;
 
@@ -166,7 +166,7 @@ async function handleAction(userId, actionType) {
         alert(`Error executing operational update: ${error.message}`);
     }
 }
-
+*/
 async function fetchUserCount() {
     try {
         const response = await fetch('/api/admin/user-count');
