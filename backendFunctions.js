@@ -6,7 +6,7 @@
     const formData = new FormData(form);
 
     try {
-        const response = await fetch('/api/routes/auth/register', {
+        const response = await fetch('/api/auth/register', {
           method: 'POST',
           body: formData
         });
