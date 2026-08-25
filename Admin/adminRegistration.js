@@ -16,14 +16,13 @@ document.getElementById('adminregform').addEventListener('submit', async (event)
             body: JSON.stringify(dataObject)
         });
 
-        // Read response text first to catch any unexpected text/HTML errors gracefully
-        const responseText = await response.text();
+        const response = await response.text();
         let data;
         
         try {
-            data = JSON.parse(responseText);
+            data = JSON.parse(response);
         } catch (e) {
-            console.error("Server did not return JSON. Raw response:", responseText);
+            console.error("Server did not return JSON. Raw response:", response);
             alert("Server Error: Received unexpected response from server.");
             return;
         }
