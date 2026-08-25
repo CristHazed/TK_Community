@@ -4,6 +4,10 @@ const router = express.Router();
 const User = require('../models/Users');
 const upload = require('../middleware/upload');
 const cloudinary = require('../config/cloudinary');
+const verifyToken = require('../middleware/authMiddleware');
+
+// Every route below requires a valid Authorization: Bearer <token> header
+router.use(verifyToken);
 
 // GET: Pending applications
 router.get('/users', async (req, res) => {

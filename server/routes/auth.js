@@ -190,6 +190,7 @@ router.post('/addAdmin', async (req, res) => {
 
 
 // AUTHENTICATE ADMIN LOGIN
+// AUTHENTICATE ADMIN LOGIN
 router.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -208,7 +209,17 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ error: 'Invalid username or password' });
         }
 
-        return res.status(200).json({ message: 'Login successful', username: admin.username });
+        const token = jwt.sign(
+            { id: admin._id, username: admin.username },
+            process.env.JWT_SECRET,
+            { expiresIn: '8h' }
+        );
+
+        return res.status(200).json({
+            message: 'Login successful',
+            token,
+            username: admin.username
+        });
     } catch (err) {
         res.status(500).json({ error: 'Server Error', message: err.message });
     }

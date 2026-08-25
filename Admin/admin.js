@@ -60,15 +60,6 @@ async function apiRequest(url, options) {
 }
 
 const adminLogoutBtn = document.getElementById('admin-logout-btn');
-const allowedAdminUsernames = new Set(['raya', 'nala', 'yaj', 'luwi', 'wushi']);
-
-function isAdminAuthenticated() {
-  const adminRole = localStorage.getItem('tk_admin_role');
-  return (
-    localStorage.getItem('tk_admin_logged_in') === 'true' &&
-    allowedAdminUsernames.has(adminRole)
-  );
-}
 
 function initAdminPortal() {
   // Navigation Tab Switching
@@ -210,25 +201,6 @@ function initAdminPortal() {
 
   loadData();
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-  if (!isAdminAuthenticated()) {
-    localStorage.removeItem('tk_admin_logged_in');
-    localStorage.removeItem('tk_admin_role');
-    window.location.href = './login.html';
-    return;
-  }
-
-  initAdminPortal();
-
-  if (adminLogoutBtn) {
-    adminLogoutBtn.addEventListener('click', () => {
-      localStorage.removeItem('tk_admin_logged_in');
-      localStorage.removeItem('tk_admin_role');
-      window.location.href = './login.html';
-    });
-  }
-});
 
 // Tab Switching Helper
 function switchTab(tabId, targetBtn) {
