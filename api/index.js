@@ -4,10 +4,10 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
-const connectDB = require('/server/config/db');
+const connectDB = require('./server/config/db');
 
-const registerRouter = require('/server/routes/adminRouter');
-const loginRouter = require('/server/routes/auth');
+const adminRouter = require('./server/routes/adminRouter');
+const loginRouter = require('./server/routes/auth');
 
 const app = express();
 
@@ -26,7 +26,7 @@ app.use(async (req, res, next) => {
   }
 });
 
-app.use('/api/', registerRouter);
-app.use('/api/' , loginRouter);
+app.use('/api/routes/admin', adminRouter);
+app.use('/api/routes/auth', loginRouter);
 
 module.exports = app;
