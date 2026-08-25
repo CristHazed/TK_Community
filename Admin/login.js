@@ -1,3 +1,5 @@
+const adminInitializer = require('/Admin/admin');
+
 document.getElementById('admin-login-form').addEventListener('submit', async (event) => {
     event.preventDefault();
 
@@ -25,6 +27,7 @@ document.getElementById('admin-login-form').addEventListener('submit', async (ev
 
         if (res.ok) {
             window.location.href = '/Admin/admin.html';
+            initAdminPortal();
         } else {
             errorBox.textContent = data.error || 'Invalid username or password.';
         }

@@ -214,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  initAdminPortal();
+
 });
 
 // Tab Switching Helper
