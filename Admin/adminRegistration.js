@@ -1,5 +1,3 @@
-const messageElement = document.getElementById('messageElement');
-
 document.getElementById('adminregform').addEventListener('submit', async (event) => {
   event.preventDefault();
 
