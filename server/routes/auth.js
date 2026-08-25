@@ -5,6 +5,7 @@ const User = require('../models/Users');
 const Admin = require('../models/Admins');
 const upload = require('../middleware/upload');
 const cloudinary = require('../config/cloudinary');
+const bcrypt = require('bcryptjs');
 
 // Upload image to Cloudinary
 const uploadToCloudinary = (file, folder) => {
@@ -159,11 +160,13 @@ router.post('/addAdmin', async (req, res) => {
         if(existAdmin) {
             return res.status(400).json({ error: 'This admin is already registered '});
         }
+        const hashedPassword = await bcrypt.hash(password, 10);
 
         const newAdmin = new Admin({
             username: username,
-            password: password
+            password: hashedPassword
         });
+
 
         await newAdmin.save();
 
@@ -183,21 +186,50 @@ router.post('/addAdmin', async (req, res) => {
 
 
 // AUTHENTICATE LOGIN
-router.get('/login/:uid', async (req,res) => {
+
+
+
+// AUTHENTICATE ADMIN LOGIN
+router.post('/login', async (req, res) => {
     try {
-        const targetUID = Number(req.params.uid);
+        const { username, password } = req.body;
 
-        if(isNaN(targetUID)) {
-            return res.status(400).json({ error: 'invalid UID Format'})
+        if (!username || !password) {
+            return res.status(400).json({ error: 'Username and password are required' });
         }
-        
-        const user = await User.findLogin(targetUID, 'approved');
 
-        if(!user) {
+        const admin = await Admin.findOne({ username });
+        if (!admin) {
+            return res.status(400).json({ error: 'Invalid username or password' });
+        }
+
+        const passwordMatches = await bcrypt.compare(password, admin.password);
+        if (!passwordMatches) {
+            return res.status(400).json({ error: 'Invalid username or password' });
+        }
+
+        return res.status(200).json({ message: 'Login successful', username: admin.username });
+    } catch (err) {
+        res.status(500).json({ error: 'Server Error', message: err.message });
+    }
+});
+
+
+router.get('/login/:username', async (req,res) => {
+    try {
+        const targetAdmin = req.params.username;
+
+        if(isNaN(targetAdmin)) {
+            return res.status(400).json({ error: 'invalid username'})
+        }
+
+        const resultAdmin = await Admin.findOne(targetAdmin, username);
+
+        if(!resultAdmin) {
             return res.status(400).json({ error : 'User not found'})
         }
 
-        return res.status(200).json(user);
+        return res.status(200).json(admin);
     } catch (err) {
         res.status(500).json({ error: 'Server Error', message: err.message }); 
     }
