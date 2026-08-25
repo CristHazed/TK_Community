@@ -21,8 +21,11 @@ app.use(async (req, res, next) => {
     await connectDB();
     next();
   } catch (error) {
-    console.error("Database connection failed:", error);
-    res.status(500).json({ error: "Database connection error", details: error.message });
+    console.error("Vercel Gateway - Database Connection Error:", error);
+    return res.status(500).json({ 
+      error: "Database connectivity error", 
+      details: error.message 
+    });
   }
 });
 
