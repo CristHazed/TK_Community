@@ -468,8 +468,8 @@ function initData() {
 
     try {
         const response = await fetch('/api/routes/auth', {
-    method: 'POST',
-    body: formData
+          method: 'POST',
+          body: formData
 });
 
     const data = await response.json();
