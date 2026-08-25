@@ -146,8 +146,25 @@ router.post('/register', upload.fields([
     }
 );
 
-// Add admin credentials
+// Get pending users
+router.get('/users', async (req, res) => {
+    try {
+        const users = await User.find({ status: 'pending' });
+        res.status(200).json({
+            message: 'Pending users retrieved successfully!',
+            users: users
+        });
+    } catch (error) {
+        console.error('Get Users Error:', error);
+        res.status(500).json({
+            error: 'Server Error',
+            message: error.message
+        });
+    }
+});
 
+
+// Add admin credentials
 router.post('/addAdmin', async (req, res) => {
     try {
         const {
