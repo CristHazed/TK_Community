@@ -4,7 +4,7 @@ let streamerMembers = [];
 let featuredStreamerIndex = 0;
 let activeVersion = 'v1';
 let activeRoleFilter = 'ALL';
-
+let savedStreamers = [];
 let tapCount = 0;
 let tapTimer;
 
@@ -467,7 +467,7 @@ function initData() {
     const formData = new FormData(form);
 
     try {
-        const response = await fetch('/api/routes/auth.js', {
+        const response = await fetch('/api/routes/auth', {
     method: 'POST',
     body: formData
 });
