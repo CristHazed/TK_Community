@@ -17,7 +17,7 @@ function readFileAsDataURL(file) {
   });
 }
 
-// Matches on the User model
+// Maps User model
 function mapUserRecord(user) {
   return {
     id: user._id,
