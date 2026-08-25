@@ -5,7 +5,7 @@ document.getElementById('adminregform').addEventListener('submit', async (event)
     const formData = new FormData(form);
 
     try {
-        const response = await fetch('/api/routes/auth/addAdmin', {
+        const response = await fetch('/api/auth/addAdmin', {
           method: 'POST',
           body: formData
         });

@@ -26,7 +26,7 @@ app.use(async (req, res, next) => {
   }
 });
 
-app.use('/api/routes/admin', adminRouter);
-app.use('/api/routes/auth', loginRouter);
+app.use('/api/admin', adminRouter);
+app.use('/api/auth', loginRouter);
 
 module.exports = app;
