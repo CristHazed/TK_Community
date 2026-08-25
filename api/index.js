@@ -4,10 +4,10 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
-const connectDB = require('./src/config/db');
+const connectDB = require('/server/config/db');
 
-const registerRouter = require('./src/routes/adminRouter');
-const loginRouter = require('./src/routes/auth');
+const registerRouter = require('/server/routes/adminRouter');
+const loginRouter = require('/server/routes/auth');
 
 const app = express();
 
