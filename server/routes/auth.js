@@ -213,26 +213,4 @@ router.post('/login', async (req, res) => {
         res.status(500).json({ error: 'Server Error', message: err.message });
     }
 });
-
-
-router.get('/login/:username', async (req,res) => {
-    try {
-        const targetAdmin = req.params.username;
-
-        if(isNaN(targetAdmin)) {
-            return res.status(400).json({ error: 'invalid username'})
-        }
-
-        const resultAdmin = await Admin.findOne(targetAdmin, username);
-
-        if(!resultAdmin) {
-            return res.status(400).json({ error : 'User not found'})
-        }
-
-        return res.status(200).json(admin);
-    } catch (err) {
-        res.status(500).json({ error: 'Server Error', message: err.message }); 
-    }
-});
-
 module.exports = router;
