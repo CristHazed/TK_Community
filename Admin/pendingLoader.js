@@ -177,16 +177,15 @@ async function handleAction(userId, actionType) {
 */
 async function fetchUserCount() {
     try {
-
-        const token = localStorage.getItem('tk_admin_token', {
+        const token = localStorage.getItem('tk_admin_token');
+        
+        const response = await fetch('/api/admin/user-count', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`, // Verify this token is valid
                 'Content-Type': 'application/json'
             }
         });
-
-        const response = await fetch('/api/admin/user-count', );
         const data = await response.json();
         document.getElementById('pending-count').innerText = data.count;
     } catch (error) {
