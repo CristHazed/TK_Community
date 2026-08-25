@@ -6,6 +6,7 @@ const Admin = require('../models/Admins');
 const upload = require('../middleware/upload');
 const cloudinary = require('../config/cloudinary');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 // Upload image to Cloudinary
 const uploadToCloudinary = (file, folder) => {
@@ -184,12 +185,6 @@ router.post('/addAdmin', async (req, res) => {
     }
 });
 
-
-// AUTHENTICATE LOGIN
-
-
-
-// AUTHENTICATE ADMIN LOGIN
 // AUTHENTICATE ADMIN LOGIN
 router.post('/login', async (req, res) => {
     try {
