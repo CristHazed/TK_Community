@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['pending', 'approved', 'rejected'],
+        enum: ['pending', 'approved', 'rejected', 'removed'],
         default: 'pending'
     },
     role: {
@@ -41,7 +41,27 @@ const userSchema = new mongoose.Schema({
     referral: {
         type: String,
         required: false
-    }
+    },
+    version: {
+        type: String,
+        enum: ['v1', 'v2'],
+        default: 'v1'
+    },
+    joinedAt: {
+        type: Date
+    },
+    removedAt: {
+        type: Date
+    },
+    // Streamer-only fields (edited via the Streamers admin tab)
+    username: { type: String },        // TikTok handle, e.g. "@name"
+    tiktokName: { type: String },
+    tiktokUrl: { type: String },
+    following: { type: Number, default: 0 },
+    followers: { type: Number, default: 0 },
+    details: { type: String },
+    streamerImage: { type: String }
+
 }, { timestamps: true });
 
 

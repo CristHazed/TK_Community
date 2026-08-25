@@ -17,25 +17,46 @@ function readFileAsDataURL(file) {
   });
 }
 
-function normalizeStreamers(streamers) {
-  const usedIds = new Set();
+// Matches on the User model
+function mapUserRecord(user) {
+  return {
+    id: user._id,
+    name: user.name,
+    ign: user.IGN,
+    uid: user.UID,
+    streamerId: user.streamerId,
+    role: user.role,
+    version: user.version || 'v1',
+    fbLink: user.FB,
+    gameProfileImg: user.inGProfile ? user.inGProfile.url : '',
+    fbProfileImg: user.fbProfile ? user.fbProfile.url : '',
+    username: user.username || (user.IGN ? `@${user.IGN.toLowerCase()}` : ''),
+    tiktokName: user.tiktokName || user.IGN,
+    tiktokUrl: user.tiktokUrl || '',
+    following: user.following || 0,
+    followers: user.followers || 0,
+    details: user.details || '',
+    image: user.streamerImage || ''
+  };
+}
 
-  return streamers.map((streamer, index) => {
-    const baseId = streamer.id || `streamer-${index}`;
-    let uniqueId = String(baseId);
-    let suffix = 1;
-
-    while (usedIds.has(uniqueId)) {
-      uniqueId = `${baseId}-${suffix}`;
-      suffix += 1;
-    }
-
-    usedIds.add(uniqueId);
-    return {
-      ...streamer,
-      id: uniqueId,
-    };
+async function apiRequest(url, options) {
+  const res = await fetch(url, {
+    headers: { 'Content-Type': 'application/json' },
+    ...options
   });
+  const text = await res.text();
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch (e) {
+    console.error('Server did not return JSON. Raw response:', text);
+    throw new Error('Server returned an unexpected response.');
+  }
+  if (!res.ok) {
+    throw new Error(data.error || 'Request failed.');
+  }
+  return data;
 }
 
 const adminLogoutBtn = document.getElementById('admin-logout-btn');
@@ -106,7 +127,7 @@ function initAdminPortal() {
   // Member Edit Form Submission
   const editForm = document.getElementById('edit-member-form');
   if (editForm) {
-    editForm.addEventListener('submit', (e) => {
+    editForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const idInput = document.getElementById('edit-member-id');
@@ -116,20 +137,22 @@ function initAdminPortal() {
 
       if (!idInput || !ignInput || !roleInput || !versionInput) return;
 
-      const id = parseInt(idInput.value);
-      const newIgn = ignInput.value.trim();
-      const newRole = roleInput.value;
-      const newVersion = versionInput.value;
+      const id = idInput.value;
 
-      const memberIndex = activeRoster.findIndex((m) => m.id === id);
-      if (memberIndex !== -1) {
-        activeRoster[memberIndex].ign = newIgn;
-        activeRoster[memberIndex].role = newRole;
-        activeRoster[memberIndex].version = newVersion;
-
-        localStorage.setItem('tk_roster', JSON.stringify(activeRoster));
-        loadData();
+      try {
+        await apiRequest(`/api/admin/users/${id}`, {
+          method: 'PUT',
+          body: JSON.stringify({
+            ign: ignInput.value.trim(),
+            role: roleInput.value,
+            version: versionInput.value
+          })
+        });
         closeEditModal();
+        await loadData();
+      } catch (err) {
+        console.error('Failed to update member:', err);
+        alert(`Error: ${err.message}`);
       }
     });
   }
@@ -140,39 +163,33 @@ function initAdminPortal() {
       event.preventDefault();
 
       const streamerId = document.getElementById('edit-streamer-id').value;
-      const streamer = activeStreamers.find(
-        (item) => String(item.id) === String(streamerId),
-      );
-      if (!streamer) return;
 
-      streamer.ign = document.getElementById('edit-streamer-ign').value.trim();
-      streamer.username = document
-        .getElementById('edit-streamer-username')
-        .value.trim();
-      streamer.tiktokName = document
-        .getElementById('edit-streamer-tiktok-name')
-        .value.trim();
-      streamer.following = document.getElementById(
-        'edit-streamer-following',
-      ).value;
-      streamer.followers = document.getElementById(
-        'edit-streamer-followers',
-      ).value;
-      streamer.tiktokUrl = document
-        .getElementById('edit-streamer-tiktok-url')
-        .value.trim();
-      streamer.details = document
-        .getElementById('edit-streamer-details')
-        .value.trim();
+      const payload = {
+        ign: document.getElementById('edit-streamer-ign').value.trim(),
+        username: document.getElementById('edit-streamer-username').value.trim(),
+        tiktokName: document.getElementById('edit-streamer-tiktok-name').value.trim(),
+        following: document.getElementById('edit-streamer-following').value,
+        followers: document.getElementById('edit-streamer-followers').value,
+        tiktokUrl: document.getElementById('edit-streamer-tiktok-url').value.trim(),
+        details: document.getElementById('edit-streamer-details').value.trim()
+      };
 
       const imageInput = document.getElementById('edit-streamer-image');
       if (imageInput.files[0]) {
-        streamer.image = await readFileAsDataURL(imageInput.files[0]);
+        payload.streamerImage = await readFileAsDataURL(imageInput.files[0]);
       }
 
-      localStorage.setItem('tk_streamers', JSON.stringify(activeStreamers));
-      closeStreamerModal();
-      loadData();
+      try {
+        await apiRequest(`/api/admin/users/${streamerId}/streamer`, {
+          method: 'PUT',
+          body: JSON.stringify(payload)
+        });
+        closeStreamerModal();
+        await loadData();
+      } catch (err) {
+        console.error('Failed to update streamer:', err);
+        alert(`Error: ${err.message}`);
+      }
     });
   }
 
@@ -227,30 +244,24 @@ function switchTab(tabId, targetBtn) {
   if (targetBtn) targetBtn.classList.add('active');
 }
 
-// Load Storage Data
-function loadData() {
-  const savedRequests = localStorage.getItem('tk_requests');
-  const savedRoster = localStorage.getItem('tk_roster');
-  const savedStreamers = localStorage.getItem('tk_streamers');
+// Load data from the API
+async function loadData() {
+  try {
+    const [pendingData, approvedData] = await Promise.all([
+      apiRequest('/api/admin/users'),
+      apiRequest('/api/admin/users/approved')
+    ]);
 
-  pendingRequests = savedRequests ? JSON.parse(savedRequests) : [];
-  activeRoster = savedRoster ? JSON.parse(savedRoster) : [];
-  activeStreamers = savedStreamers ? JSON.parse(savedStreamers) : [];
+    pendingRequests = (pendingData.users || []).map(mapUserRecord);
 
-  if (!savedStreamers) {
-    activeStreamers = activeRoster
-      .filter((member) => member.role === 'Streamer')
-      .map((member) => ({
-        ...member,
-        details: member.details || '',
-        image: member.image || '',
-      }));
-    activeRoster = activeRoster.filter((member) => member.role !== 'Streamer');
-    localStorage.setItem('tk_roster', JSON.stringify(activeRoster));
+    const approvedUsers = (approvedData.users || []).map(mapUserRecord);
+    activeStreamers = approvedUsers.filter((u) => u.role === 'Streamer');
+    activeRoster = approvedUsers.filter((u) => u.role !== 'Streamer');
+  } catch (err) {
+    console.error('Failed to load data from server:', err);
+    alert('Could not load data from the server. Please refresh and try again.');
+    return;
   }
-
-  activeStreamers = normalizeStreamers(activeStreamers);
-  localStorage.setItem('tk_streamers', JSON.stringify(activeStreamers));
 
   const pendingCount = document.getElementById('pending-count');
   const rosterCount = document.getElementById('roster-count');
@@ -264,17 +275,6 @@ function loadData() {
   renderAdminRoster();
   renderAdminStreamers();
 }
-
-// Storage Listener across open windows
-window.addEventListener('storage', (event) => {
-  if (
-    event.key === 'tk_requests' ||
-    event.key === 'tk_roster' ||
-    event.key === 'tk_streamers'
-  ) {
-    loadData();
-  }
-});
 
 // Render Pending Application Cards
 function renderRequests() {
@@ -373,9 +373,9 @@ function openStreamerModal(id) {
   if (!streamer) return;
 
   document.getElementById('edit-streamer-id').value = streamer.id;
+  document.getElementById('edit-streamer-ign').value = streamer.ign;
   document.getElementById('edit-streamer-username').value =
     streamer.username || `@${streamer.ign.toLowerCase()}`;
-  document.getElementById('edit-streamer-ign').value = streamer.ign;
   document.getElementById('edit-streamer-tiktok-name').value =
     streamer.tiktokName || streamer.ign;
   document.getElementById('edit-streamer-following').value =
@@ -396,7 +396,7 @@ function closeStreamerModal() {
 }
 
 function openApplicantModal(id) {
-  const req = pendingRequests.find((request) => request.id === id);
+  const req = pendingRequests.find((request) => String(request.id) === String(id));
   if (!req) return;
 
   const nameElement = document.getElementById('applicant-modal-name');
@@ -500,17 +500,23 @@ function renderAdminRoster() {
                 <span style="color: #aaa; font-size: 0.9rem;">Role: ${member.role}</span>
             </div>
             <div style="display: flex; gap: 0.5rem;">
-                <button class="btn btn-refresh" onclick="openEditModal(${member.id})">Edit</button>
-                <button class="btn btn-kick" onclick="openKickModal(${member.id})">Kick Out</button>
+                <button class="btn btn-refresh edit-member-btn" type="button">Edit</button>
+                <button class="btn btn-kick kick-member-btn" type="button">Kick Out</button>
             </div>
         `;
+    item
+      .querySelector('.edit-member-btn')
+      .addEventListener('click', () => openEditModal(member.id));
+    item
+      .querySelector('.kick-member-btn')
+      .addEventListener('click', () => openKickModal(member.id));
     container.appendChild(item);
   });
 }
 
 // Approval Modal Handlers
 function openApprovalModal(id) {
-  const req = pendingRequests.find((r) => r.id === id);
+  const req = pendingRequests.find((r) => String(r.id) === String(id));
   if (!req) return;
 
   pendingApprovalId = id;
@@ -527,33 +533,25 @@ function closeApprovalModal() {
   if (modal) modal.style.display = 'none';
 }
 
-function confirmApproval(versionChoice) {
+async function confirmApproval(versionChoice) {
   if (!pendingApprovalId) return;
 
-  const req = pendingRequests.find((r) => r.id === pendingApprovalId);
-  if (!req) return;
-
-  const newMember = {
-    id: Date.now(),
-    ign: req.ign,
-    role: req.role,
-    version: versionChoice, // 'v1' or 'v2'
-    joinedAt: Date.now(),
-  };
-
-  activeRoster.unshift(newMember);
-  pendingRequests = pendingRequests.filter((r) => r.id !== pendingApprovalId);
-
-  localStorage.setItem('tk_roster', JSON.stringify(activeRoster));
-  localStorage.setItem('tk_requests', JSON.stringify(pendingRequests));
-
-  closeApprovalModal();
-  loadData();
+  try {
+    await apiRequest(`/api/admin/users/${pendingApprovalId}/approve`, {
+      method: 'PUT',
+      body: JSON.stringify({ version: versionChoice })
+    });
+    closeApprovalModal();
+    await loadData();
+  } catch (err) {
+    console.error('Failed to approve user:', err);
+    alert(`Error: ${err.message}`);
+  }
 }
 
 // Member Edit Modal Handlers
 function openEditModal(id) {
-  const member = activeRoster.find((m) => m.id === id);
+  const member = activeRoster.find((m) => String(m.id) === String(id));
   if (!member) return;
 
   const idInput = document.getElementById('edit-member-id');
@@ -578,7 +576,7 @@ function closeEditModal() {
 
 // Kick Out Confirmation Modal Handlers
 function openKickModal(id) {
-  const member = activeRoster.find((m) => m.id === id);
+  const member = activeRoster.find((m) => String(m.id) === String(id));
   if (!member) return;
 
   pendingKickId = id;
@@ -601,21 +599,32 @@ function closeKickModal() {
   if (modal) modal.style.display = 'none';
 }
 
-function confirmKick() {
+async function confirmKick() {
   if (!pendingKickId) return;
 
-  activeRoster = activeRoster.filter((m) => m.id !== pendingKickId);
-  localStorage.setItem('tk_roster', JSON.stringify(activeRoster));
-
-  closeKickModal();
-  loadData();
+  try {
+    await apiRequest(`/api/admin/users/${pendingKickId}/kick`, {
+      method: 'PUT'
+    });
+    closeKickModal();
+    await loadData();
+  } catch (err) {
+    console.error('Failed to kick member:', err);
+    alert(`Error: ${err.message}`);
+  }
 }
 
 // Rejection Handler
-function rejectMember(id) {
-  if (confirm('Are you sure you want to reject this registration request?')) {
-    pendingRequests = pendingRequests.filter((r) => r.id !== id);
-    localStorage.setItem('tk_requests', JSON.stringify(pendingRequests));
-    loadData();
+async function rejectMember(id) {
+  if (!confirm('Are you sure you want to reject this registration request?')) return;
+
+  try {
+    await apiRequest(`/api/admin/users/${id}/reject`, {
+      method: 'PUT'
+    });
+    await loadData();
+  } catch (err) {
+    console.error('Failed to reject user:', err);
+    alert(`Error: ${err.message}`);
   }
 }
