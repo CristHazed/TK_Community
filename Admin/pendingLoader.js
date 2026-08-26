@@ -107,36 +107,53 @@ async function loadRegistrations() {
     }
 }
 
-modalConfirmBtn.onclick = async () => {
-    if (!activeTargetUserId) return;
+document.addEventListener('DOMContentLoaded', () => {
+    
+    // 1. Select the button element from the HTML
+    const modalConfirmBtn = document.getElementById('modalConfirmBtn'); // Replace with your actual ID or selector
 
-    try {
-        const token = localStorage.getItem('tk_admin_token');
-        
-        // FIX: Added leading slash to endpoint route so pathing remains exact
-        const response = await fetch(`/api/admin/users/${activeTargetUserId}/reject`, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `Bearer ${token}`, // FIX: Added admin token authorization to rejection endpoint
-                'Content-Type': 'application/json'
+    // 2. Check if the button exists before assigning the click event
+    if (modalConfirmBtn) {
+        modalConfirmBtn.onclick = async () => {
+            if (!activeTargetUserId) return;
+
+            try {
+                const token = localStorage.getItem('tk_admin_token');
+                
+                const response = await fetch(`/api/admin/users/${activeTargetUserId}/reject`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Server Response Status: ${response.status}`);
+                }
+
+                alert(`Application successfully rejected!`);
+                
+                // Safely handle confirmationModal check if it's defined elsewhere
+                if (typeof confirmationModal !== 'undefined' && confirmationModal) {
+                    confirmationModal.style.display = 'none';
+                }
+                
+                activeTargetUserId = null; 
+                
+                // Call your functions if they are defined in this scope
+                if (typeof loadRegistrations === 'function') loadRegistrations();
+                if (typeof fetchUserCount === 'function') fetchUserCount();
+                
+            } catch (err) {
+                console.error('Failed to update status:', err);
+                alert('Could not update status. Please try again.');
             }
-        });
-
-        if (!response.ok) {
-            throw new Error(`Server Response Status: ${response.status}`);
-        }
-
-        alert(`Application successfully rejected!`);
-        confirmationModal.style.display = 'none';
-        activeTargetUserId = null; // Clear state
-        
-        loadRegistrations();
-        fetchUserCount();
-    } catch (err) {
-        console.error('Failed to update status:', err);
-        alert('Could not update status. Please try again.');
+        };
+    } else {
+        console.error("Could not find modalConfirmBtn in the DOM. Check your HTML ID.");
     }
-};
+});
 
 modalCancelBtn.onclick = () => {
     confirmationModal.style.display = 'none';
