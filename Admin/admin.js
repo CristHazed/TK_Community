@@ -8,16 +8,34 @@ let currentVersionFilter = 'ALL';
 let pendingApprovalId = null;
 let pendingKickId = null;
 
+
+// ================================
+// Admin Authentication
+// ================================
+
+const adminToken = localStorage.getItem('tk_admin_token');
+
+if (!adminToken) {
+  window.location.href = '/Admin/login.html';
+}
+
+
+// ================================
+// Helpers
+// ================================
+
 function readFileAsDataURL(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
+
     reader.onload = () => resolve(reader.result);
     reader.onerror = reject;
+
     reader.readAsDataURL(file);
   });
 }
 
-// Maps User model
+
 function mapUserRecord(user) {
   return {
     id: user._id,
@@ -27,40 +45,84 @@ function mapUserRecord(user) {
     streamerId: user.streamerId,
     role: user.role,
     version: user.version || 'v1',
+
     fbLink: user.FB,
-    gameProfileImg: user.inGProfile ? user.inGProfile.url : '',
-    fbProfileImg: user.fbProfile ? user.fbProfile.url : '',
-    username: user.username || (user.IGN ? `@${user.IGN.toLowerCase()}` : ''),
-    tiktokName: user.tiktokName || user.IGN,
-    tiktokUrl: user.tiktokUrl || '',
-    following: user.following || 0,
-    followers: user.followers || 0,
-    details: user.details || '',
-    image: user.streamerImage || ''
+
+    gameProfileImg: user.inGProfile
+      ? user.inGProfile.url
+      : '',
+
+    fbProfileImg: user.fbProfile
+      ? user.fbProfile.url
+      : '',
+
+    username:
+      user.username ||
+      (user.IGN ? `@${user.IGN.toLowerCase()}` : ''),
+
+    tiktokName:
+      user.tiktokName ||
+      user.IGN,
+
+    tiktokUrl:
+      user.tiktokUrl ||
+      '',
+
+    following:
+      user.following ||
+      0,
+
+    followers:
+      user.followers ||
+      0,
+
+    details:
+      user.details ||
+      '',
+
+    image:
+      user.streamerImage ||
+      ''
   };
 }
 
-const adminToken = localStorage.getItem('tk_admin_token');
-if (!adminToken) {
-  window.location.href = '/Admin/login.html';
-}
 
-async function apiRequest(url, options) {
+// ================================
+// API Request
+// ================================
+
+async function apiRequest(url, options = {}) {
+  const token = localStorage.getItem('tk_admin_token');
+
+  if (!token) {
+    window.location.href = '/Admin/login.html';
+    return;
+  }
+
   const res = await fetch(url, {
-    headers: { 'Content-Type': 'application/json' },
-    ...options
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+      ...(options.headers || {})
+    }
   });
+
   const text = await res.text();
+
   let data;
+
   try {
     data = JSON.parse(text);
   } catch (e) {
-    console.error('Server did not return JSON. Raw response:', text);
+    console.error('Server did not return JSON:', text);
     throw new Error('Server returned an unexpected response.');
   }
+
   if (!res.ok) {
     throw new Error(data.error || 'Request failed.');
   }
+
   return data;
 }
 
@@ -599,9 +661,12 @@ async function rejectMember(id) {
     await apiRequest(`/api/admin/users/${id}/reject`, {
       method: 'PUT'
     });
+
     await loadData();
   } catch (err) {
     console.error('Failed to reject user:', err);
     alert(`Error: ${err.message}`);
   }
 }
+
+document.addEventListener('DOMContentLoaded', initAdminPortal);
