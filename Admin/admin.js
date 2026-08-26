@@ -19,6 +19,13 @@ if (!adminToken) {
   window.location.href = '/Admin/login.html';
 }
 
+(function checkAuthGuard() {
+  const token = localStorage.getItem('tk_admin_token');
+  if (!token) {
+    // replace() drops the protected page from navigation history stack
+    window.location.replace('/Admin/login.html');
+  }
+})();
 
 // ================================
 // Helpers

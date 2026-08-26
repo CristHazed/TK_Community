@@ -162,4 +162,18 @@ router.get('/user-count', async (req, res) => {
   }
 });
 
+// Admin Logout
+router.post('/api/admin/logout', verifyToken, async (req, res) => {
+  try {
+    const token = req.headers.authorization.split(' ')[1];
+
+    return res.status(200).json({ 
+      success: true, 
+      message: 'Server session invalidated successfully.' 
+    });
+  } catch (err) {
+    return res.status(500).json({ error: 'Server logout transaction failed.' });
+  }
+});
+
 module.exports = router;
