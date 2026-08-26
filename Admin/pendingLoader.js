@@ -109,10 +109,9 @@ async function loadRegistrations() {
 
 document.addEventListener('DOMContentLoaded', () => {
     
-    // 1. Select the button element from the HTML
-    const modalConfirmBtn = document.getElementById('modalConfirmBtn'); // Replace with your actual ID or selector
+    // FIX: Change 'modalConfirmBtn' to 'applicant-reject-btn' to match your HTML
+    const modalConfirmBtn = document.getElementById('applicant-reject-btn'); 
 
-    // 2. Check if the button exists before assigning the click event
     if (modalConfirmBtn) {
         modalConfirmBtn.onclick = async () => {
             if (!activeTargetUserId) return;
@@ -134,14 +133,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 alert(`Application successfully rejected!`);
                 
-                // Safely handle confirmationModal check if it's defined elsewhere
-                if (typeof confirmationModal !== 'undefined' && confirmationModal) {
+                // FIX: Update this to match your real modal overlay ID ('applicantModal')
+                const confirmationModal = document.getElementById('applicantModal');
+                if (confirmationModal) {
                     confirmationModal.style.display = 'none';
                 }
                 
                 activeTargetUserId = null; 
                 
-                // Call your functions if they are defined in this scope
                 if (typeof loadRegistrations === 'function') loadRegistrations();
                 if (typeof fetchUserCount === 'function') fetchUserCount();
                 
@@ -151,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
     } else {
-        console.error("Could not find modalConfirmBtn in the DOM. Check your HTML ID.");
+        console.error("Could not find applicant-reject-btn in the DOM.");
     }
 });
 
