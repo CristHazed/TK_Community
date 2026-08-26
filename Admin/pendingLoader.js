@@ -30,44 +30,34 @@ async function loadRegistrations() {
             return;
         }
 
-        data.users.forEach((item) => {
-            if (!item.name) return; 
+        data.users.forEach((req) => {
+            // FIX: Unified ID reference to handle MongoDB _id or standard id formats safely
+            const targetId = req._id || req.id; 
 
-            const wrapper = document.createElement('div');
-            wrapper.className = 'item-wrapper';
-
-            const dbResponse = document.createElement('div');
-            dbResponse.className = 'databaseResponse';
-
-            const nameEl = document.createElement('h6');
-            nameEl.textContent = `Name: ${item.name}`;
-
-            const ignEl = document.createElement('h6');
-            ignEl.textContent = `IGN: ${item.IGN}`;
-
-            const uidEl = document.createElement('h6');
-            uidEl.textContent = `UID: ${item.UID}`;
-
-            const streamerEl = document.createElement('h6');
-            streamerEl.textContent = `Streamer ID: ${item.streamerId || 'N/A'}`;
-
-            const ingImg = document.createElement('img');
-            ingImg.style.width = '5rem';
-            ingImg.alt = 'In Game Profile Image';
-            if (item.inGProfile?.url) {
-                ingImg.src = item.inGProfile.url;
-            } else {
-                ingImg.style.display = 'none';
-            }
-
-            const fbImg = document.createElement('img');
-            fbImg.style.width = '5rem';
-            fbImg.alt = 'Facebook Profile Image';
-            if (item.fbProfile?.url) {
-                fbImg.src = item.fbProfile.url;
-            } else {
-                fbImg.style.display = 'none';
-            }
+            const card = document.createElement('div');
+            card.className = 'request-card applicant-card';
+            card.setAttribute('role', 'button');
+            card.setAttribute('tabindex', '0');
+            card.setAttribute('aria-label', `View application from ${req.IGN || 'Unknown'}`);
+            card.innerHTML = `
+                        <div class="request-header">
+                            <div>
+                                <h3>${req.IGN || 'N/A'} <span style="font-size: 0.9rem; color: #888;">(${req.name || 'No Name'})</span></h3>
+                                <p style="color: var(--tk-red-primary, #d32f2f); font-weight: bold; margin-top: 0.2rem;">Preferred Role: ${req.role || 'None'}</p>
+                            </div>
+                            <span class="applicant-view-label">View credentials &rsaquo;</span>
+                        </div>
+                            `;
+            
+            card.addEventListener('click', () => {
+                if (typeof openApplicantModal === 'function') openApplicantModal(targetId);
+            });
+            card.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    if (typeof openApplicantModal === 'function') openApplicantModal(targetId);
+                }
+            });
 
             const actionContainer = document.createElement('div');
             actionContainer.className = 'action-buttons';
@@ -80,53 +70,54 @@ async function loadRegistrations() {
             approveBtn.className = 'btn-approve';
             approveBtn.style.backgroundColor = '#28a745';
             approveBtn.style.color = '#fff';
-
-
-            approveBtn.onclick = () => handleAction(item._id || item.id, 'approve');
+            approveBtn.onclick = (e) => {
+                e.stopPropagation(); // FIX: Stops parent card modal from showing up on approval click
+                handleAction(targetId, 'approve');
+            };
 
             const rejectBtn = document.createElement('button');
             rejectBtn.textContent = 'Reject';
             rejectBtn.className = 'btn-reject';
             rejectBtn.style.backgroundColor = '#dc3545';
             rejectBtn.style.color = '#fff';
-            
-            rejectBtn.onclick = () => {
-                activeTargetUserId = item._id || item.id; 
-                confirmationModal.style.display = 'flex';
+            rejectBtn.onclick = (e) => {
+                e.stopPropagation(); // FIX: Stops parent card modal from showing up on rejection click
+                activeTargetUserId = targetId; // FIX: Replaced undefined variable "item" with targetId
+                if (confirmationModal) confirmationModal.style.display = 'flex';
             };
 
             actionContainer.appendChild(approveBtn);
             actionContainer.appendChild(rejectBtn);
 
-            dbResponse.appendChild(nameEl);
-            dbResponse.appendChild(ignEl);
-            dbResponse.appendChild(uidEl);
-            dbResponse.appendChild(streamerEl);
-            dbResponse.appendChild(ingImg);
-            dbResponse.appendChild(fbImg);
-            dbResponse.appendChild(actionContainer);
-
-            wrapper.appendChild(dbResponse);
-            requestsList.appendChild(wrapper);
+            // FIX: Removed broken "data.appendChild" blocks and "dbResponse" append.
+            // Appending action buttons directly to the visual card structure.
+            card.appendChild(actionContainer);
+            requestsList.appendChild(card);
         });
 
     } catch (err) {
         console.error("Error fetching registrars", err);
-        requestsList.style.display = 'flex';
-        requestsList.style.justifyContent = 'center';
-        requestsList.style.alignItems = 'center';
-        requestsList.style.minHeight = '150px';
-        requestsList.innerHTML = `<h1>Error Loading Data</h1>`;
+        if (requestsList) {
+            requestsList.style.display = 'flex';
+            requestsList.style.justifyContent = 'center';
+            requestsList.style.alignItems = 'center';
+            requestsList.style.minHeight = '150px';
+            requestsList.innerHTML = `<h1>Error Loading Data</h1>`;
+        }
     }
 }
-/*
+
 modalConfirmBtn.onclick = async () => {
     if (!activeTargetUserId) return;
 
     try {
-        const response = await fetch(`api/admin/users/${activeTargetUserId}/reject`, {
+        const token = localStorage.getItem('tk_admin_token');
+        
+        // FIX: Added leading slash to endpoint route so pathing remains exact
+        const response = await fetch(`/api/admin/users/${activeTargetUserId}/reject`, {
             method: 'PUT',
             headers: {
+                'Authorization': `Bearer ${token}`, // FIX: Added admin token authorization to rejection endpoint
                 'Content-Type': 'application/json'
             }
         });
@@ -137,6 +128,7 @@ modalConfirmBtn.onclick = async () => {
 
         alert(`Application successfully rejected!`);
         confirmationModal.style.display = 'none';
+        activeTargetUserId = null; // Clear state
         
         loadRegistrations();
         fetchUserCount();
@@ -153,46 +145,61 @@ modalCancelBtn.onclick = () => {
 
 
 async function handleAction(userId, actionType) {
+    if (actionType !== 'approve') return;
+
+    if (!confirm("Are you sure you want to approve this registration?")) return;
+
     try {
-        const response = await fetch(`/api/auth/users/${userId}/${actionType}`, {
+        const token = localStorage.getItem('tk_admin_token');
+
+        const response = await fetch(`/api/admin/users/${userId}/approve`, {
             method: 'PUT',
             headers: {
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
-            }
+            },
+            body: JSON.stringify({ version: 'v1' }) 
         });
 
+        const data = await response.json();
+
         if (!response.ok) {
-            throw new Error(`Failed to update user status to ${actionType}`);
+            throw new Error(data.message || data.error || 'Failed to approve user');
         }
 
-        alert(`Application successfully ${actionType}d!`);
+        alert(data.message); 
+        
         loadRegistrations();
-        fetchUserCount();
+        fetchUserCount(); // Added count sync after an approval loop completes
 
-    } catch (error) {
-        console.error(`Error processing ${actionType}:`, error);
-        alert(`Error executing operational update: ${error.message}`);
+    } catch (err) {
+        console.error("Approval error:", err);
+        alert(`Error: ${err.message}`);
     }
-}
-*/
+};
+
 async function fetchUserCount() {
     try {
         const token = localStorage.getItem('tk_admin_token');
+        const pendingCountEl = document.getElementById('pending-count');
+        if (!pendingCountEl) return;
         
         const response = await fetch('/api/admin/user-count', {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${token}`, // Verify this token is valid
+                'Authorization': `Bearer ${token}`, 
                 'Content-Type': 'application/json'
             }
         });
         const data = await response.json();
-        document.getElementById('pending-count').innerText = data.count;
+        pendingCountEl.innerText = data.count;
     } catch (error) {
         console.error("Error loading account data count:", error);
-        document.getElementById('pending-count').innerText = 'Error';
+        const pendingCountEl = document.getElementById('pending-count');
+        if (pendingCountEl) pendingCountEl.innerText = 'Error';
     }
 }
 
+// Initial Executions
 loadRegistrations();
 fetchUserCount();

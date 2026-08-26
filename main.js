@@ -4,7 +4,7 @@ let streamerMembers = [];
 let featuredStreamerIndex = 0;
 let activeVersion = 'v1';
 let activeRoleFilter = 'ALL';
-let savedStreamers = [];
+
 let tapCount = 0;
 let tapTimer;
 
@@ -21,7 +21,7 @@ if (logo) {
     }, 1200);
 
     if (tapCount === 5) {
-      window.location.href = '/Admin/login.html';
+      window.location.href = './Admin/login.html';
       tapCount = 0;
     }
   });
@@ -59,10 +59,10 @@ document.addEventListener('DOMContentLoaded', () => {
   renderStreamers();
 
   document.getElementById('streamer-prev')?.addEventListener('click', () => {
-    updateFeaturedStreamer(featuredStreamerIndex - 1);
+    updateFeaturedStreamer(featuredStreamerIndex - 1, true);
   });
   document.getElementById('streamer-next')?.addEventListener('click', () => {
-    updateFeaturedStreamer(featuredStreamerIndex + 1);
+    updateFeaturedStreamer(featuredStreamerIndex + 1, true);
   });
 
   // 4. Role Filter Buttons
@@ -506,6 +506,24 @@ function initData() {
     ...v2Members.map((ign) => ({ ign, role: 'Casual', version: 'v2' })),
   ];
 
+  const savedRoster = localStorage.getItem('tk_roster');
+  const savedStreamers = localStorage.getItem('tk_streamers');
+  if (!savedRoster) {
+    rosterMembers = defaultRoster;
+    localStorage.setItem('tk_roster', JSON.stringify(defaultRoster));
+  } else {
+    try {
+      const parsed = JSON.parse(savedRoster);
+      rosterMembers = parsed.filter(
+        (m) => !adminNames.includes((m.ign || '').toLowerCase()),
+      );
+      localStorage.setItem('tk_roster', JSON.stringify(rosterMembers));
+    } catch (e) {
+      rosterMembers = defaultRoster;
+      localStorage.setItem('tk_roster', JSON.stringify(defaultRoster));
+    }
+  }
+
   if (!savedStreamers) {
     const legacyStreamers = rosterMembers.filter(
       (member) => member.role === 'Streamer',
@@ -546,6 +564,29 @@ function initData() {
   renderRoster();
   renderStreamers();
 }
+
+window.addEventListener('storage', (event) => {
+  if (event.key === 'tk_roster') {
+    try {
+      const adminNames = managementList.map((m) => m.ign.toLowerCase());
+      const parsed = JSON.parse(event.newValue || '[]');
+      rosterMembers = parsed.filter(
+        (m) => !adminNames.includes((m.ign || '').toLowerCase()),
+      );
+    } catch (e) {
+      rosterMembers = [];
+    }
+    renderRoster();
+  }
+  if (event.key === 'tk_streamers') {
+    try {
+      streamerMembers = JSON.parse(event.newValue || '[]');
+    } catch (e) {
+      streamerMembers = [];
+    }
+    renderStreamers();
+  }
+});
 
 /* ==========================================================================
    2. Leadership Carousel Controller
@@ -806,7 +847,7 @@ function renderStreamers() {
       dot.textContent = streamer.ign;
       dot.setAttribute('aria-label', `Show ${streamer.ign}`);
       dot.setAttribute('aria-pressed', index === featuredStreamerIndex);
-      dot.addEventListener('click', () => updateFeaturedStreamer(index));
+      dot.addEventListener('click', () => updateFeaturedStreamer(index, true));
       dotsContainer.appendChild(dot);
     });
   }
@@ -814,7 +855,7 @@ function renderStreamers() {
   updateFeaturedStreamer(featuredStreamerIndex);
 }
 
-function updateFeaturedStreamer(index) {
+function updateFeaturedStreamer(index, shouldScrollTab = false) {
   const track = document.getElementById('public-streamers-list');
   const dots = document.querySelectorAll('.streamer-ign-tab');
   if (!track || streamerMembers.length === 0) return;
@@ -833,8 +874,14 @@ function updateFeaturedStreamer(index) {
     dot.setAttribute('aria-pressed', dotIndex === featuredStreamerIndex);
   });
 
-  const activeTab = dots[featuredStreamerIndex];
-  activeTab?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  if (shouldScrollTab) {
+    const activeTab = dots[featuredStreamerIndex];
+    activeTab?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'nearest',
+      inline: 'center',
+    });
+  }
 }
 
 /* ==========================================================================
@@ -847,6 +894,91 @@ function readFileAsDataURL(file) {
     reader.onerror = (error) => reject(error);
     reader.readAsDataURL(file);
   });
+}
+
+async function submitForm(e) {
+  e.preventDefault();
+
+  const gameImgFile = document.getElementById('gameProfileImg').files[0];
+  const fbImgFile = document.getElementById('fbProfileImg').files[0];
+
+  try {
+    const gameProfileImg = gameImgFile
+      ? await readFileAsDataURL(gameImgFile)
+      : '';
+    const fbProfileImg = fbImgFile ? await readFileAsDataURL(fbImgFile) : '';
+
+    const newReq = {
+      id: Date.now(),
+      name: document.getElementById('name').value,
+      ign: document.getElementById('ign').value,
+      uid: document.getElementById('uid').value,
+      streamerId: document.getElementById('streamerId').value,
+      referredBy: document.getElementById('referredBy').value.trim() || 'None',
+      fbLink: document.getElementById('fbLink').value,
+      role: document.getElementById('role').value,
+      gameProfileImg: gameProfileImg,
+      fbProfileImg: fbProfileImg,
+      submittedAt: Date.now(),
+    };
+
+    const requestKey =
+      newReq.referredBy.toLowerCase() === 'none'
+        ? 'tk_requests'
+        : 'tk_referral_requests';
+    const existingRequests = JSON.parse(
+      localStorage.getItem(requestKey) || '[]',
+    );
+    existingRequests.push(newReq);
+    localStorage.setItem(requestKey, JSON.stringify(existingRequests));
+
+    showApplicationStatus(
+      'success',
+      'APPLICATION RECEIVED',
+      'Application Submitted',
+      `Application for ${newReq.ign} was submitted successfully. Top Kings admins will review your application.`,
+    );
+    e.target.reset();
+  } catch (err) {
+    showApplicationStatus(
+      'error',
+      'SUBMISSION COULD NOT BE SAVED',
+      'Try Smaller Images',
+      'Image file size is too large for LocalStorage. Please upload smaller images.',
+    );
+  }
+}
+
+function showApplicationStatus(type, kicker, title, message) {
+  const modal = document.getElementById('applicationStatusModal');
+  const content = modal?.querySelector('.application-status-content');
+  const icon = document.getElementById('application-status-icon');
+  const kickerElement = document.getElementById('application-status-kicker');
+  const titleElement = document.getElementById('application-status-title');
+  const messageElement = document.getElementById('application-status-message');
+
+  if (
+    !modal ||
+    !content ||
+    !icon ||
+    !kickerElement ||
+    !titleElement ||
+    !messageElement
+  ) {
+    return;
+  }
+
+  content.classList.toggle('is-error', type === 'error');
+  icon.textContent = type === 'error' ? '!' : 'TK';
+  kickerElement.textContent = kicker;
+  titleElement.textContent = title;
+  messageElement.textContent = message;
+  modal.style.display = 'flex';
+}
+
+function closeApplicationStatus() {
+  const modal = document.getElementById('applicationStatusModal');
+  if (modal) modal.style.display = 'none';
 }
 
 function openModal() {
@@ -897,4 +1029,9 @@ window.onclick = function (e) {
 
   const thirdMonthModal = document.getElementById('thirdMonthModal');
   if (e.target === thirdMonthModal) closeThirdMonthModal();
+
+  const applicationStatusModal = document.getElementById(
+    'applicationStatusModal',
+  );
+  if (e.target === applicationStatusModal) closeApplicationStatus();
 };
