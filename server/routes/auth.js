@@ -49,7 +49,7 @@ router.post('/register', upload.fields([
                 referral
             } = req.body;
             
-            const targetUID = Number(UID);
+            const targetUID = UID ? Number(String(UID).trim()) : NaN;
 
             if(isNaN(targetUID)) {
                 return res.status(400).json({ error: 'invalid UID Format'})
