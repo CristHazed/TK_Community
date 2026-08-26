@@ -134,6 +134,17 @@ async function apiRequest(url, options = {}) {
 }
 
 const adminLogoutBtn = document.getElementById('admin-logout-btn');
+if (adminLogoutBtn) {
+  adminLogoutBtn.addEventListener('click', (event) => {
+    event.preventDefault();
+    
+    if (confirm('Are you sure you want to log out?')) {
+      localStorage.removeItem('tk_admin_token');
+      sessionStorage.clear();
+      window.location.replace('/Admin/login.html');
+    }
+  });
+}
 
 function initAdminPortal() {
   // Navigation Tab Switching
