@@ -687,4 +687,9 @@ async function rejectMember(id) {
   }
 }
 
+const refreshBtn = document.getElementById('refresh-btn');
+if (refreshBtn) {
+  refreshBtn.addEventListener('click', loadData);
+}
+
 document.addEventListener('DOMContentLoaded', initAdminPortal);
