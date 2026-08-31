@@ -110,7 +110,7 @@ document.getElementById('admin-login-form').addEventListener('submit', async (ev
     const dataObject = Object.fromEntries(formData.entries());
     
     // 1. Show the loader
-    TKLoader.show('./images/logo.png');
+    TKLoader.show('/images/logo.png');
 
     try {
         const res = await fetch('/api/auth/login', {
