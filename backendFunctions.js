@@ -5,6 +5,8 @@
     const form = document.getElementById('reg-form');
     const formData = new FormData(form);
 
+    TKLoader.show('/images/logo.png');
+
     try {
         const response = await fetch('/api/auth/register', {
           method: 'POST',
@@ -12,7 +14,7 @@
         });
 
     const data = await response.json();
-        TKLoader.show('/images/logo.png');
+
     if(response.ok) {
         alert('Registration complete!');
         TKLoader.hide();
