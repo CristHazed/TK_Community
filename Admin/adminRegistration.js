@@ -34,3 +34,4 @@ document.getElementById('adminregform').addEventListener('submit', async (event)
         alert('Unable to reach Server!');
     }
 });
+

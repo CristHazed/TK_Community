@@ -12,14 +12,17 @@
         });
 
     const data = await response.json();
-
+        TKLoader.show('/images/logo.png');
     if(response.ok) {
         alert('Registration complete!');
+        TKLoader.hide();
         document.getElementById('reg-form').reset();
     } else {
+        TKLoader.hide();
         alert(`Error: ${data.error}`);
     }
     } catch (error) {
+        TKLoader.hide();
         console.error('Network Error: ', error);
         alert('Unable to reach Server!');
     }
