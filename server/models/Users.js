@@ -36,7 +36,8 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['Streamer', 'Casual', 'Competitive']
+        enum: ['Streamer', 'Casual', 'Competitive'],
+        default: 'Casual'
     },
     referral: {
         type: String,
