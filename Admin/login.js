@@ -109,7 +109,6 @@ document.getElementById('admin-login-form').addEventListener('submit', async (ev
     const formData = new FormData(form);
     const dataObject = Object.fromEntries(formData.entries());
     
-    // 1. Show the loader
     TKLoader.show('/images/logo.png');
 
     try {
@@ -142,7 +141,6 @@ document.getElementById('admin-login-form').addEventListener('submit', async (ev
         console.error('Network Error: ', error);
         errorBox.textContent = 'Unable to reach server.';
     } finally {
-        // 2. Hide the loader once here, guaranteeing it runs regardless of outcome
         TKLoader.hide(); 
     }
 });

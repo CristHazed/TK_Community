@@ -16,17 +16,18 @@
     const data = await response.json();
 
     if(response.ok) {
-        alert('Registration complete!');
+        showRegistrationSuccess();
         TKLoader.hide();
         document.getElementById('reg-form').reset();
     } else {
         TKLoader.hide();
-        alert(`Error: ${data.error}`);
+        showRegistrationFailed();
+        console.error(`Error: ${data.error}`);
     }
     } catch (error) {
         TKLoader.hide();
         console.error('Network Error: ', error);
-        alert('Unable to reach Server!');
+        showRegistrationFailed();
     }
 });
 

@@ -137,12 +137,15 @@ const adminLogoutBtn = document.getElementById('admin-logout-btn');
 if (adminLogoutBtn) {
   adminLogoutBtn.addEventListener('click', (event) => {
     event.preventDefault();
-    
-    if (confirm('Are you sure you want to log out?')) {
-      localStorage.removeItem('tk_admin_token');
-      sessionStorage.clear();
-      window.location.replace('/Admin/login.html');
-    }
+    customConfirm(
+      'SYSTEM CONFIRMATION', 
+      'Are you sure you want to log out?', 
+      () => {
+        localStorage.removeItem('tk_admin_token');
+        sessionStorage.clear();
+        window.location.replace('/Admin/login.html');
+      }
+    );
   });
 }
 
@@ -693,3 +696,104 @@ if (refreshBtn) {
 }
 
 document.addEventListener('DOMContentLoaded', initAdminPortal);
+
+
+// confirmation modals
+function initTKModal() {
+  // Prevent duplicate creation
+  if (document.getElementById('tk-modal-overlay')) return;
+
+  // 1. Inject Theme Styles
+  const style = document.createElement('style');
+  style.innerHTML = `
+    .tk-modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(10, 10, 10, 0.85); display: flex; justify-content: center; align-items: center; z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.2s ease-in-out; backdrop-filter: blur(2px); font-family: inherit; }
+    .tk-modal-overlay.active { opacity: 1; pointer-events: auto; }
+    .tk-modal-box { background: #16181b; border-left: 4px solid #ff4742; border-radius: 4px; width: 90%; max-width: 400px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7); transform: translateY(-20px); transition: transform 0.2s ease-in-out; }
+    .tk-modal-overlay.active .tk-modal-box { transform: translateY(0); }
+    .tk-modal-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #2a2d32; }
+    .tk-modal-header h3 { margin: 0; font-size: 16px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #fff; }
+    .tk-modal-close { background: none; border: none; color: #888; font-size: 24px; cursor: pointer; line-height: 1; padding: 0; transition: color 0.2s; }
+    .tk-modal-close:hover { color: #ff4742; }
+    .tk-modal-body { padding: 24px 20px; font-size: 14px; color: #c4c4c4; line-height: 1.5; }
+    .tk-modal-footer { padding: 16px 20px; display: flex; justify-content: flex-end; gap: 12px; border-top: 1px solid #2a2d32; }
+    .tk-btn { padding: 10px 20px; font-size: 13px; font-weight: 700; text-transform: uppercase; border-radius: 4px; cursor: pointer; transition: all 0.2s ease; letter-spacing: 0.5px; outline: none; }
+    .tk-btn-outline { background: transparent; color: #fff; border: 1px solid #444; }
+    .tk-btn-outline:hover { background: rgba(255, 255, 255, 0.05); border-color: #888; }
+    .tk-btn-solid { background: #ff4742; color: #fff; border: 1px solid #ff4742; }
+    .tk-btn-solid:hover { background: #ff5e59; border-color: #ff5e59; }
+    .tk-hidden { display: none !important; }
+  `;
+  document.head.appendChild(style);
+
+  // 2. Construct DOM Structure
+  const overlay = document.createElement('div');
+  overlay.id = 'tk-modal-overlay';
+  overlay.className = 'tk-modal-overlay';
+  overlay.innerHTML = `
+    <div class="tk-modal-box">
+      <div class="tk-modal-header">
+        <h3 id="tk-modal-title"></h3>
+        <button class="tk-modal-close" id="tk-btn-x">&times;</button>
+      </div>
+      <div class="tk-modal-body">
+        <p id="tk-modal-message"></p>
+      </div>
+      <div class="tk-modal-footer">
+        <button id="tk-btn-cancel" class="tk-btn tk-btn-outline">CANCEL</button>
+        <button id="tk-btn-confirm" class="tk-btn tk-btn-solid">CONFIRM</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  // 3. Bind Static Close Events
+  document.getElementById('tk-btn-x').addEventListener('click', closeTKModal);
+  document.getElementById('tk-btn-cancel').addEventListener('click', closeTKModal);
+}
+
+// Function to close/hide the modal
+function closeTKModal() {
+  const overlay = document.getElementById('tk-modal-overlay');
+  if (overlay) overlay.classList.remove('active');
+}
+
+// Custom Alert replacement (Single OK button)
+function customAlert(title, message) {
+  initTKModal(); // Ensures modal exists
+
+  document.getElementById('tk-modal-title').textContent = title;
+  document.getElementById('tk-modal-message').textContent = message;
+  
+  const cancelBtn = document.getElementById('tk-btn-cancel');
+  const confirmBtn = document.getElementById('tk-btn-confirm');
+
+  cancelBtn.classList.add('tk-hidden'); // Hide cancel button
+  
+  confirmBtn.textContent = "OK";
+  confirmBtn.onclick = closeTKModal; // Just close on click
+  
+  document.getElementById('tk-modal-overlay').classList.add('active');
+}
+
+// Custom Confirm replacement (Cancel & Confirm buttons)
+function customConfirm(title, message, onConfirmCallback) {
+  initTKModal(); // Ensures modal exists
+
+  document.getElementById('tk-modal-title').textContent = title;
+  document.getElementById('tk-modal-message').textContent = message;
+  
+  const cancelBtn = document.getElementById('tk-btn-cancel');
+  const confirmBtn = document.getElementById('tk-btn-confirm');
+
+  cancelBtn.classList.remove('tk-hidden'); // Show cancel button
+  
+  confirmBtn.textContent = "CONFIRM";
+  confirmBtn.onclick = () => {
+    closeTKModal();
+    if (typeof onConfirmCallback === 'function') {
+      onConfirmCallback();
+    }
+  };
+  
+  document.getElementById('tk-modal-overlay').classList.add('active');
+}

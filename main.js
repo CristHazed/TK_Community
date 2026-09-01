@@ -1137,3 +1137,158 @@ const TKLoader = {
         }
     }
 };
+
+// registration success modal
+
+function showRegistrationSuccess() {
+  // 1. Inject Styles dynamically (only once)
+  if (!document.getElementById('tk-success-styles')) {
+    const style = document.createElement('style');
+    style.id = 'tk-success-styles';
+    style.innerHTML = `
+      .tk-success-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 17, 20, 0.9); display: flex; justify-content: center; align-items: center; z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; backdrop-filter: blur(3px); font-family: inherit; overflow: hidden; }
+      .tk-success-overlay.active { opacity: 1; pointer-events: auto; }
+      .tk-success-box { background: #1d2127; border: 1px solid #ff4742; border-top: 4px solid #ff4742; border-radius: 6px; width: 90%; max-width: 420px; padding: 40px 30px; text-align: center; color: #fff; box-shadow: 0 20px 50px rgba(0,0,0,0.8); transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; z-index: 2; }
+      .tk-success-overlay.active .tk-success-box { transform: scale(1); }
+      
+      /* SVG Checkmark styling */
+      .tk-success-icon { width: 50px; height: 50px; margin: 0 auto 20px auto; display: block; fill: none; stroke: #ff4742; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+      
+      .tk-success-box h2 { margin: 0 0 15px 0; font-size: 22px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; }
+      .tk-success-box h3 { margin: 0 0 20px 0; font-size: 16px; color: #9aa0a6; font-weight: 400; }
+      .tk-success-box p { font-size: 14.5px; color: #d1d5db; line-height: 1.6; margin-bottom: 30px; padding: 0 10px; }
+      
+      /* Continue Button */
+      .tk-btn-continue { background: transparent; color: #ff4742; border: 1px solid #ff4742; padding: 12px 0; width: 100%; font-size: 14px; font-weight: 700; text-transform: uppercase; border-radius: 4px; cursor: pointer; transition: all 0.2s ease; letter-spacing: 1px; }
+      .tk-btn-continue:hover { background: rgba(255, 71, 66, 0.1); border-color: #ff5e59; color: #ff5e59; }
+      
+      /* Confetti Animation */
+      .tk-confetti { position: absolute; width: 6px; height: 14px; top: -20px; z-index: 1; border-radius: 2px; animation: tk-fall linear forwards; }
+      @keyframes tk-fall { 
+        0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+        100% { transform: translateY(110vh) rotate(720deg); opacity: 0.8; }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  // 2. Remove existing modal to reset the animation if called multiple times
+  let existingOverlay = document.getElementById('tk-success-overlay');
+  if (existingOverlay) existingOverlay.remove();
+
+  // 3. Build the DOM Structure
+  const overlay = document.createElement('div');
+  overlay.id = 'tk-success-overlay';
+  overlay.className = 'tk-success-overlay';
+
+  overlay.innerHTML = `
+    <div class="tk-success-box">
+      <svg class="tk-success-icon" viewBox="0 0 24 24">
+        <path d="M20 6L9 17l-5-5"></path>
+      </svg>
+      <h2>REGISTRATION SUCCESS!</h2>
+      <h3>Welcome to Top Kings!</h3>
+      <p>Your application is under review. Our admins will verify your details and FB link. Look out for an email soon!</p>
+      <button class="tk-btn-continue" onclick="closeTkSuccess()">CONTINUE</button>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  // 4. Generate Confetti Elements
+  const colors = ['#ff4742', '#ffffff', '#5c636a', '#343a40']; // Red, white, dark grays
+  for (let i = 0; i < 80; i++) {
+    const conf = document.createElement('div');
+    conf.className = 'tk-confetti';
+    
+    // Randomize starting position, color, duration, and delay
+    conf.style.left = Math.random() * 100 + 'vw';
+    conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+    conf.style.animationDuration = (Math.random() * 3 + 2) + 's'; // 2s to 5s falling speed
+    conf.style.animationDelay = (Math.random() * 2) + 's'; // stagger starts
+    conf.style.transform = `rotate(${Math.random() * 360}deg)`;
+    
+    overlay.appendChild(conf);
+  }
+
+  // 5. Trigger Appearance Animation
+  setTimeout(() => {
+    overlay.classList.add('active');
+  }, 10);
+}
+
+// Global function to close the modal smoothly and clean up the DOM
+window.closeTkSuccess = function() {
+  const overlay = document.getElementById('tk-success-overlay');
+  if (overlay) {
+    overlay.classList.remove('active');
+    setTimeout(() => overlay.remove(), 300); // Wait for fade-out before removing
+  }
+};
+
+// Failed Registration Modal
+function showRegistrationFailed() {
+  // 1. Inject Styles dynamically (only once)
+  if (!document.getElementById('tk-failed-styles')) {
+    const style = document.createElement('style');
+    style.id = 'tk-failed-styles';
+    style.innerHTML = `
+      .tk-failed-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 17, 20, 0.9); display: flex; justify-content: center; align-items: center; z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; backdrop-filter: blur(3px); font-family: inherit; }
+      .tk-failed-overlay.active { opacity: 1; pointer-events: auto; }
+      .tk-failed-box { background: #1d2127; border: 1px solid #ff4742; border-top: 4px solid #ff4742; border-radius: 6px; width: 90%; max-width: 420px; padding: 40px 30px; text-align: center; color: #fff; box-shadow: 0 20px 50px rgba(0,0,0,0.8); transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; z-index: 2; }
+      .tk-failed-overlay.active .tk-failed-box { transform: scale(1); }
+      
+      /* SVG Error Icon styling */
+      .tk-failed-icon { width: 55px; height: 55px; margin: 0 auto 20px auto; display: block; fill: none; stroke: #ff4742; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+      
+      .tk-failed-box h2 { margin: 0 0 15px 0; font-size: 22px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; color: #ff4742; }
+      .tk-failed-box h3 { margin: 0 0 20px 0; font-size: 16px; color: #9aa0a6; font-weight: 400; }
+      .tk-failed-box p { font-size: 14.5px; color: #d1d5db; line-height: 1.6; margin-bottom: 30px; padding: 0 10px; }
+      
+      /* Close/Try Again Button */
+      .tk-btn-close { background: transparent; color: #ff4742; border: 1px solid #ff4742; padding: 12px 0; width: 100%; font-size: 14px; font-weight: 700; text-transform: uppercase; border-radius: 4px; cursor: pointer; transition: all 0.2s ease; letter-spacing: 1px; }
+      .tk-btn-close:hover { background: rgba(255, 71, 66, 0.1); border-color: #ff5e59; color: #ff5e59; }
+    `;
+    document.head.appendChild(style);
+  }
+
+  // 2. Remove existing modal to reset the animation if called multiple times
+  let existingOverlay = document.getElementById('tk-failed-overlay');
+  if (existingOverlay) existingOverlay.remove();
+
+  // 3. Build the DOM Structure
+  const overlay = document.createElement('div');
+  overlay.id = 'tk-failed-overlay';
+  overlay.className = 'tk-failed-overlay';
+
+  overlay.innerHTML = `
+    <div class="tk-failed-box">
+      <!-- Error / X Icon -->
+      <svg class="tk-failed-icon" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="15" y1="9" x2="9" y2="15"></line>
+        <line x1="9" y1="9" x2="15" y2="15"></line>
+      </svg>
+      <h2>SUBMISSION FAILED</h2>
+      <h3>Something went wrong</h3>
+      <p>We couldn't process your application at this time. Please check your connection and try again later.</p>
+      <button class="tk-btn-close" onclick="closeTkFailed()">CLOSE</button>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  // 4. Trigger Appearance Animation
+  setTimeout(() => {
+    overlay.classList.add('active');
+  }, 10);
+}
+
+// Global function to close the modal smoothly and clean up the DOM
+window.closeTkFailed = function() {
+  const overlay = document.getElementById('tk-failed-overlay');
+  if (overlay) {
+    overlay.classList.remove('active');
+    setTimeout(() => overlay.remove(), 300); // Wait for fade-out before removing
+  }
+};
