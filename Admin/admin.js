@@ -31,6 +31,11 @@ if (!adminToken) {
 // Helpers
 // ================================
 
+function isReferral(request) {
+  const value = (request.referral || '').trim().toLowerCase();
+  return value !== '' && value !== 'none';
+}
+
 function readFileAsDataURL(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -52,6 +57,8 @@ function mapUserRecord(user) {
     streamerId: user.streamerId,
     role: user.role,
     version: user.version || 'v1',
+
+    referral: user.referral || '',
 
     fbLink: user.FB,
 
@@ -168,6 +175,11 @@ function initAdminPortal() {
   const pendingSearchInput = document.getElementById('pending-search');
   if (pendingSearchInput) {
     pendingSearchInput.addEventListener('input', renderRequests);
+  }
+
+  const referralSearchInput = document.getElementById('referral-search');
+  if (referralSearchInput) {
+    referralSearchInput.addEventListener('input', renderReferrals);
   }
 
   const streamerSearchInput = document.getElementById('streamer-search');
@@ -325,13 +337,18 @@ async function loadData() {
 
   const pendingCount = document.getElementById('pending-count');
   const rosterCount = document.getElementById('roster-count');
+  const referralCount = document.getElementById('referral-count');
+
+  const referralRequests = pendingRequests.filter(isReferral);
 
   if (pendingCount) pendingCount.innerText = pendingRequests.length;
+  if (referralCount) referralCount.innerText = referralRequests.length;
   if (rosterCount) rosterCount.innerText = activeRoster.length;
   const streamerCount = document.getElementById('streamer-count');
   if (streamerCount) streamerCount.innerText = activeStreamers.length;
 
   renderRequests();
+  renderReferrals();
   renderAdminRoster();
   renderAdminStreamers();
 }
@@ -366,6 +383,54 @@ function renderRequests() {
                 <div>
                     <h3>${req.ign} <span style="font-size: 0.9rem; color: #888;">(${req.name})</span></h3>
                     <p style="color: var(--tk-red-primary, #d32f2f); font-weight: bold; margin-top: 0.2rem;">Preferred Role: ${req.role}</p>
+                    ${isReferral(req) ? '<span style="display: inline-block; font-size: 0.75rem; background: #0288d1; color: #fff; padding: 0.1rem 0.4rem; border-radius: 3px; margin-top: 0.3rem;">Referred</span>' : ''}
+                </div>
+                <span class="applicant-view-label">View credentials &rsaquo;</span>
+            </div>
+        `;
+    card.addEventListener('click', () => openApplicantModal(req.id));
+    card.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        openApplicantModal(req.id);
+      }
+    });
+    container.appendChild(card);
+  });
+}
+
+// Render Referral Application Cards (pending applicants who listed a referrer)
+function renderReferrals() {
+  const container = document.getElementById('referrals-list');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const searchInput = document.getElementById('referral-search');
+  const searchQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
+  const referralRequests = pendingRequests.filter(isReferral);
+  const filteredRequests = referralRequests.filter((request) =>
+    [request.ign, request.name, request.role, request.uid, request.referral]
+      .filter(Boolean)
+      .some((value) => value.toString().toLowerCase().includes(searchQuery)),
+  );
+
+  if (filteredRequests.length === 0) {
+    container.innerHTML = `<p class="empty-state">${referralRequests.length === 0 ? 'No referral applications.' : 'No referred applicants match your search.'}</p>`;
+    return;
+  }
+
+  filteredRequests.forEach((req) => {
+    const card = document.createElement('div');
+    card.className = 'request-card applicant-card';
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('aria-label', `View application from ${req.ign}`);
+    card.innerHTML = `
+            <div class="request-header">
+                <div>
+                    <h3>${req.ign} <span style="font-size: 0.9rem; color: #888;">(${req.name})</span></h3>
+                    <p style="color: var(--tk-red-primary, #d32f2f); font-weight: bold; margin-top: 0.2rem;">Preferred Role: ${req.role}</p>
+                    <p style="color: #0288d1; font-weight: bold; margin-top: 0.2rem;">Referred by: ${req.referral}</p>
                 </div>
                 <span class="applicant-view-label">View credentials &rsaquo;</span>
             </div>
@@ -474,6 +539,7 @@ function openApplicantModal(id) {
     <p><strong>UID</strong><span>${req.uid}</span></p>
     <p><strong>Streamer Mode ID</strong><span>${req.streamerId}</span></p>
     <p><strong>Facebook</strong><a href="${req.fbLink}" target="_blank" rel="noopener">${req.fbLink}</a></p>
+    ${isReferral(req) ? `<p><strong>Referred By</strong><span>${req.referral}</span></p>` : ''}
   `;
   proofsElement.innerHTML = `
     <div class="proof-box">
@@ -785,7 +851,7 @@ function customConfirm(title, message, onConfirmCallback) {
   const cancelBtn = document.getElementById('tk-btn-cancel');
   const confirmBtn = document.getElementById('tk-btn-confirm');
 
-  cancelBtn.classList.remove('tk-hidden'); // Show cancel button
+  cancelBtn.classList.remove('tk-hidden');
   
   confirmBtn.textContent = "CONFIRM";
   confirmBtn.onclick = () => {

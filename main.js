@@ -1188,7 +1188,7 @@ function showRegistrationSuccess() {
       </svg>
       <h2>REGISTRATION SUCCESS!</h2>
       <h3>Welcome to Top Kings!</h3>
-      <p>Your application is under review. Our admins will verify your details and FB link. Look out for an email soon!</p>
+      <p>Your application is under review. Our admins will verify your details and FB link. Visit our Facebook page for updates!</p>
       <button class="tk-btn-continue" onclick="closeTkSuccess()">CONTINUE</button>
     </div>
   `;
